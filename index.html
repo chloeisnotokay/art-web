@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="style.css" />
 
-<div class="container">
-
-<img src="b0cc097e25b6c04f0bdc70ced4c0c356.jpg" alt="eyeball" /> 
+<div class="container"> 
 
 <body>
-<script>
-function toggleImage() {
-   var img1 = "b0cc097e25b6c04f0bdc70ced4c0c356.jpg";
-   var img2 = "56fbec1e3b58c6a10a15976cfc247d80.jpg";
-   
-   var imgElement = document.getElementById('toggleImage');
-
-   imgElement.src = (imgElement.src === img1)? img2 : img1;
-}
-</script>
-<img src="http://placehold.it/350x150" id="toggleImage" onclick="toggleImage();"/>
-
+<img id="willChangeImage" src="b0cc097e25b6c04f0bdc70ced4c0c356.jpg" onclick="document.getElementById('willChangeImage').src="56fbec1e3b58c6a10a15976cfc247d80.jpg">
 </body>
   
 </div>
