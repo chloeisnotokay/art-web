@@ -3,3 +3,7 @@
   place-items: center;
   height: 100vh; 
 }
+
+selector {
+  background-color: black; 
+}
