@@ -4,6 +4,22 @@
 <div class="container">
 
 <img src="b0cc097e25b6c04f0bdc70ced4c0c356.jpg" alt="eyeball" /> 
+
+<body>
+<script>
+function toggleImage() {
+   var img1 = "b0cc097e25b6c04f0bdc70ced4c0c356.jpg";
+   var img2 = "http://placehold.it/200x200";
+   
+   var imgElement = document.getElementById('toggleImage');
+
+   imgElement.src = (imgElement.src === img1)? img2 : img1;
+}
+</script>
+<img src="http://placehold.it/350x150" id="toggleImage" onclick="toggleImage();"/>
+
+</body>
+  
 </div>
 
 <style>
