@@ -21,15 +21,15 @@
       font-size: 4rem;
       color: #000000;
       position: absolute;
-      top: 20px; /* Final resting position */
+      top: 100px; /* Fixed distance from the top */
       left: 50%;
-      transform: translate(-50%, 300px); /* Starts below */
+      transform: translate(-50%, 200px); /* Starts further down */
       animation: bounceUp 3s ease-out forwards;
     }
 
     @keyframes bounceUp {
       0% {
-        transform: translate(-50%, 300px) scale(0.5);
+        transform: translate(-50%, 200px) scale(0.5);
         opacity: 0;
       }
       30% {
@@ -43,7 +43,7 @@
         transform: translate(-50%, -5px) scale(1.1);
       }
       100% {
-        transform: translate(-80%, 0) scale(1); /* Ends exactly at top: 100px */
+        transform: translate(-50%, 0) scale(1); /* Final position */
       }
     }
 
@@ -70,7 +70,7 @@
   <script>
     setTimeout(() => {
       document.getElementById('movingText').classList.add('glow');
-    }, 3200); // after bounce ends
+    }, 3200); // glow after animation ends
   </script>
 </body>
 </html>
