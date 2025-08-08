@@ -8,27 +8,18 @@
       font-family: 'MyFont';
       src: url('CloisterBlack.ttf') format('truetype');
     }
-    
-body {
+
+    body {
       margin: 0;
       background-color: #fdfdfd;
       height: 100vh;
       overflow: hidden;
     }
 
-.name-container {
-      display: flex;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: moveToTop 1s ease-out 2s forwards;
-    }
-    
     .moving-text {
       font-family: 'MyFont', sans-serif;
       font-size: 4rem;
-      color: #black;
+      color: #000000; /* valid black color */
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
@@ -60,8 +51,8 @@ body {
       }
     }
 
-  .name-container.glow {
-      animation: glowEffect 1.5s ease-in-out 3.2s forwards;
+    .glow {
+      animation: glowEffect 1.5s ease-in-out forwards;
     }
 
     @keyframes glowEffect {
@@ -78,12 +69,13 @@ body {
   </style>
 </head>
 <body>
-  <div class="moving-text">chloe doodles</div>
-<script>
-    // Add glow class slightly after moveToTop animation ends
+  <div class="moving-text" id="movingText">chloe doodles</div>
+
+  <script>
+    // Add glow effect after animation finishes
     setTimeout(() => {
-      document.getElementById('nameContainer').classList.add('glow');
-    }, 3200); // Wait 3.2s (bounce + moveToTop)
+      document.getElementById('movingText').classList.add('glow');
+    }, 3200); // after 3.2s
   </script>
 </body>
 </html>
