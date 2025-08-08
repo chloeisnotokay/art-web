@@ -19,7 +19,7 @@
     .moving-text {
       font-family: 'MyFont', sans-serif;
       font-size: 4rem;
-      color: #000000; /* valid black color */
+      color: #000000;
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
@@ -42,17 +42,17 @@
         transform: translateX(-50%) scale(0.9);
       }
       80% {
-        top: 25%;
+        top: 20%;
         transform: translateX(-50%) scale(1.1);
       }
       100% {
-        top: 10%;
+        top: 50px; /* final top position with space from the top */
         transform: translateX(-50%) scale(1);
       }
     }
 
     .glow {
-      animation: glowEffect 2.5s ease-in-out forwards;
+      animation: glowEffect 1.5s ease-in-out forwards;
     }
 
     @keyframes glowEffect {
@@ -60,7 +60,7 @@
         text-shadow: none;
       }
       50% {
-        text-shadow: 0 0 15px #gray, 0 0 25px #ff99b5;
+        text-shadow: 0 0 10px #999999, 0 0 15px #cccccc;
       }
       100% {
         text-shadow: none;
@@ -72,10 +72,10 @@
   <div class="moving-text" id="movingText">chloe doodles</div>
 
   <script>
-    // Add glow effect after animation finishes
+    // Trigger glow after bounce finishes
     setTimeout(() => {
       document.getElementById('movingText').classList.add('glow');
-    }, 3200); // after 3.2s
+    }, 3200);
   </script>
 </body>
 </html>
