@@ -2,9 +2,13 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Centered Both Ways</title>
+  <title>Image Switch with Redirect</title>
   <style>
-    html, body { height: 100%; margin: 0; }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
     .center-wrap {
       min-height: 100vh;
       display: flex;
@@ -25,27 +29,29 @@
 
 <div class="center-wrap">
   <img id="myImage" src="Blue pixel icon.jpg" alt="Click me">
-  <!-- Preload second image -->
-  <img src="f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg" style="display: none;">
+  <!-- Preload the second image -->
+  <img src="f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg" style="display: none;" alt="">
 </div>
 
 <script>
   const img = document.getElementById("myImage");
 
   img.addEventListener("click", function () {
-    if (img.src.includes("Blue%20pixel%20icon.jpg") || img.src.includes("Blue pixel icon.jpg")) {
+    const currentSrc = img.src;
+
+    if (
+      currentSrc.endsWith("Blue%20pixel%20icon.jpg") ||
+      currentSrc.endsWith("Blue pixel icon.jpg")
+    ) {
       img.src = "f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg";
 
-      img.onload = function () {
-        setTimeout(function () {
-          window.location.href = "picks.html";
-        }, 1000);
-      };
+      // Wait a moment before redirect
+      setTimeout(function () {
+        window.location.href = "picks.html";
+      }, 2000);
     }
   });
 </script>
 
 </body>
 </html>
-
-
