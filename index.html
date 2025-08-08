@@ -1,56 +1,51 @@
 <!DOCTYPE html>
-<link rel="stylesheet" type="text/css" href="style.css" />
-
-
-<!DOCTYPE html>
-
 <html>
 <head>
-<meta charset="utf-8">
+  <meta charset="utf-8">
   <title>Centered Both Ways</title>
   <style>
     html, body { height: 100%; margin: 0; }
     .center-wrap {
-      min-height: 100vh;               /* full viewport height */
+      min-height: 100vh;
       display: flex;
-      align-items: center;             /* vertical centering */
-      justify-content: center;         /* horizontal centering */
-      flex-direction: column;          /* keep text under image */
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       gap: 12px;
       background-color: black;
     }
 
     img {
       cursor: pointer;
-      width: 400px; /* adjust size if needed */
-      
-    }
-  </style>
-</head>
-<body>
+      width: 400px;
     }
   </style>
 </head>
 <body>
 
 <div class="center-wrap">
-<!-- Image that changes on click -->
-<img id="myImage" src="Blue pixel icon.jpg" alt="Click me">
+  <img id="myImage" src="Blue pixel icon.jpg" alt="Click me">
+  <!-- Preload second image -->
+  <img src="f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg" style="display: none;">
 </div>
+
 <script>
   const img = document.getElementById("myImage");
 
   img.addEventListener("click", function () {
-    if (img.src.includes("Blue pixel icon.jpg")) {
-      img.src = "f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg"; // swap to second image
-    } 
-    setTimeout(function () {
-      window.location.href = "picks.html"; // change this to your target page
-    }, 2000);
-  
+    if (img.src.includes("Blue%20pixel%20icon.jpg") || img.src.includes("Blue pixel icon.jpg")) {
+      img.src = "f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg";
+
+      img.onload = function () {
+        setTimeout(function () {
+          window.location.href = "picks.html";
+        }, 1000);
+      };
+    }
   });
 </script>
 
 </body>
 </html>
+
 
