@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Chloe Orrick</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'MyFont';
+      src: url('CloisterBlack.ttf') format('truetype');
+    }
+
     body {
       background-color: #fefefe;
       display: flex;
@@ -15,7 +19,7 @@
     }
 
     .moving-text {
-      font-family: 'Pacifico', cursive;
+      font-family: 'MyFont', sans-serif;
       font-size: 4rem;
       color: #ff4f70;
       animation: move 5s infinite linear;
@@ -23,12 +27,8 @@
     }
 
     @keyframes move {
-      0% {
-        transform: translateX(-100%);
-      }
-      100% {
-        transform: translateX(100%);
-      }
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
   </style>
 </head>
