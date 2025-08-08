@@ -3,17 +3,40 @@
 
 <div class="container"> 
 
-<style>
-.button {
-  <input type="image" src="b0cc097e25b6c04f0bdc70ced4c0c356.jpg" name="saveForm" class="my-button" id="saveForm" />
-}
-.button:hover {
-  <input type="image" src="56fbec1e3b58c6a10a15976cfc247d80.jpg" name="saveForm1" class="my-button1" id="saveForm1" />
-}
-</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    img {
+      cursor: pointer;
+      width: 200px; /* adjust size if needed */
+    }
+  </style>
+</head>
+<body>
+
+<!-- Image that changes on click -->
+<img id="myImage" src="b0cc097e25b6c04f0bdc70ced4c0c356.jpg" alt="Click me">
+
+<script>
+  const img = document.getElementById("myImage");
+
+  img.addEventListener("click", function () {
+    if (img.src.includes("b0cc097e25b6c04f0bdc70ced4c0c356.jpg")) {
+      img.src = "56fbec1e3b58c6a10a15976cfc247d80.jpg"; // swap to second image
+    } else {
+      img.src = "b0cc097e25b6c04f0bdc70ced4c0c356.jpg"; // swap back to first image
+    }
+  });
+</script>
+
+</body>
+</html>
+
+  
 </div>
 
-<style>
 body {
   background-color: black;
 }
