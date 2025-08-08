@@ -17,6 +17,7 @@
       justify-content: center;         /* horizontal centering */
       flex-direction: column;          /* keep text under image */
       gap: 12px;
+      background-color: black;
     }
 
     img {
@@ -41,6 +42,7 @@
 
   img.addEventListener("click", function () {
     if (img.src.includes("b0cc097e25b6c04f0bdc70ced4c0c356.jpg")) {
+      container.style.backgroundColor = 'red';
       img.src = "56fbec1e3b58c6a10a15976cfc247d80.jpg"; // swap to second image
     } 
     setTimeout(function () {
@@ -52,11 +54,4 @@
 
 </body>
 </html>
-
-
-<style>
-body {
-  background-color: black;
-}
-</style>
 
