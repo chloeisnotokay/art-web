@@ -3,14 +3,26 @@
 
 
 <!DOCTYPE html>
+
 <html>
 <head>
+<meta charset="utf-8">
+  <title>Centered Both Ways</title>
   <style>
+    html, body { height: 100%; margin: 0; }
+    .center-wrap {
+      min-height: 100vh;               /* full viewport height */
+      display: flex;
+      align-items: center;             /* vertical centering */
+      justify-content: center;         /* horizontal centering */
+      flex-direction: column;          /* keep text under image */
+      gap: 12px;
+    }
+
     img {
       cursor: pointer;
       width: 200px; /* adjust size if needed */
-      display: block; /* make image behave like a block element */
-      margin: 0 auto; /* center horizontally */
+      
     }
   </style>
 </head>
@@ -20,9 +32,10 @@
 </head>
 <body>
 
+<div class="center-wrap">
 <!-- Image that changes on click -->
 <img id="myImage" src="b0cc097e25b6c04f0bdc70ced4c0c356.jpg" alt="Click me">
-
+</div>
 <script>
   const img = document.getElementById("myImage");
 
