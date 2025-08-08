@@ -9,7 +9,7 @@
       src: url('CloisterBlack.ttf') format('truetype');
     }
 
-  body {
+body {
       margin: 0;
       background-color: #fff;
       height: 100vh;
@@ -20,23 +20,24 @@
     }
 
     .name-container {
+      display: flex;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      display: flex;
+      animation: moveToTop 1s ease-out 2s forwards;
     }
 
     .letter {
       font-family: 'MyFont', sans-serif;
       font-size: 4rem;
       color: #black;
-      animation: bounce 1s ease-out forwards;
       position: relative;
+      animation: bounce 0.8s ease-out forwards;
       opacity: 0;
     }
 
-    /* Stagger animation with nth-child */
+    /* Stagger animation delays */
     .letter:nth-child(1) { animation-delay: 0s; }
     .letter:nth-child(2) { animation-delay: 0.1s; }
     .letter:nth-child(3) { animation-delay: 0.2s; }
@@ -48,15 +49,16 @@
     .letter:nth-child(9) { animation-delay: 0.8s; }
     .letter:nth-child(10) { animation-delay: 0.9s; }
     .letter:nth-child(11) { animation-delay: 1s; }
+    .letter:nth-child(12) { animation-delay: 1.1s; }
 
     @keyframes bounce {
       0% {
-        top: 200px;
+        top: 150px;
         transform: scale(0.5);
         opacity: 0;
       }
       50% {
-        top: -20px;
+        top: -30px;
         transform: scale(1.4);
         opacity: 1;
       }
@@ -65,8 +67,15 @@
         transform: scale(0.9);
       }
       100% {
-        top: -100px;
+        top: 0;
         transform: scale(1);
+      }
+    }
+
+    @keyframes moveToTop {
+      to {
+        top: 30px;
+        transform: translateX(-50%);
       }
     }
   </style>
