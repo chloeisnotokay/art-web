@@ -13,37 +13,41 @@
       margin: 0;
       background-color: #fdfdfd;
       height: 100vh;
-      overflow: hidden; /* Keep this now, it's safe */
+      overflow: hidden;
     }
 
     .moving-text {
       font-family: 'MyFont', sans-serif;
       font-size: 4rem;
-      color: #000000;
+      color: #000000; /* valid black color */
       position: absolute;
-      top: 50px; /* Final resting place */
       left: 50%;
-      transform: translate(-50%, 200vh); /* Start way offscreen below */
-      animation: bounceInGrowUp 2.5s ease-out forwards;
+      transform: translateX(-50%);
+      animation: bounceInGrowUp 3s ease-out forwards;
     }
 
     @keyframes bounceInGrowUp {
       0% {
-        transform: translate(-50%, 200vh) scale(0.5);
+        top: 100%;
+        transform: translateX(-50%) scale(0.5);
         opacity: 0;
       }
       30% {
-        transform: translate(-50%, -50px) scale(1.3);
+        top: 40%;
+        transform: translateX(-50%) scale(1.3);
         opacity: 1;
       }
       60% {
-        transform: translate(-50%, 10px) scale(0.9);
+        top: 30%;
+        transform: translateX(-50%) scale(0.9);
       }
       80% {
-        transform: translate(-50%, -5px) scale(1.1);
+        top: 25%;
+        transform: translateX(-50%) scale(1.1);
       }
       100% {
-        transform: translate(-50%, 0) scale(1);
+        top: 10%;
+        transform: translateX(-50%) scale(1);
       }
     }
 
@@ -56,7 +60,7 @@
         text-shadow: none;
       }
       50% {
-        text-shadow: 0 0 10px #999999, 0 0 20px #cccccc;
+        text-shadow: 0 0 15px #ff4f70, 0 0 25px #ff99b5;
       }
       100% {
         text-shadow: none;
@@ -68,9 +72,10 @@
   <div class="moving-text" id="movingText">chloe doodles</div>
 
   <script>
+    // Add glow effect after animation finishes
     setTimeout(() => {
       document.getElementById('movingText').classList.add('glow');
-    }, 2600); // glow after bounce ends
+    }, 3200); // after 3.2s
   </script>
 </body>
 </html>
