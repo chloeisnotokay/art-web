@@ -1,55 +1,53 @@
 <!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="style.css" />
+
+
+<!DOCTYPE html>
+
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Image Switch with Redirect</title>
+<meta charset="utf-8">
+  <title>Centered Both Ways</title>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-
+    html, body { height: 100%; margin: 0; }
     .center-wrap {
-      min-height: 100vh;
+      min-height: 100vh;               /* full viewport height */
       display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      align-items: center;             /* vertical centering */
+      justify-content: center;         /* horizontal centering */
+      flex-direction: column;          /* keep text under image */
       gap: 12px;
       background-color: black;
     }
 
     img {
       cursor: pointer;
-      width: 400px;
+      width: 400px; /* adjust size if needed */
+      
+    }
+  </style>
+</head>
+<body>
     }
   </style>
 </head>
 <body>
 
 <div class="center-wrap">
-  <img id="myImage" src="Blue pixel icon.jpg" alt="Click me">
-  <!-- Preload the second image -->
-  <img src="f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg" style="display: none;" alt="">
+<!-- Image that changes on click -->
+<img id="myImage" src="b0cc097e25b6c04f0bdc70ced4c0c356.jpg" alt="Click me">
 </div>
-
 <script>
   const img = document.getElementById("myImage");
 
   img.addEventListener("click", function () {
-    const currentSrc = img.src;
-
-    if (
-      currentSrc.endsWith("Blue%20pixel%20icon.jpg") ||
-      currentSrc.endsWith("Blue pixel icon.jpg")
-    ) {
-      img.src = "f1f92f9098c1cd6cbd9568a8cb9dd19c.jpg";
-
-      // Wait a moment before redirect
-      setTimeout(function () {
-        window.location.href = "picks.html";
-      }, 2000);
-    }
+    if (img.src.includes("b0cc097e25b6c04f0bdc70ced4c0c356.jpg")) {
+      img.src = "56fbec1e3b58c6a10a15976cfc247d80.jpg"; // swap to second image
+    } 
+    setTimeout(function () {
+      window.location.href = "picks.html"; // change this to your target page
+    }, 500);
+  
   });
 </script>
 
