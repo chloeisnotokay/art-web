@@ -21,9 +21,9 @@
       font-size: 4rem;
       color: #000000;
       position: absolute;
-      top: 100px; /* Fixed distance from the top */
+      top: 100px;
       left: 50%;
-      transform: translate(-50%, 20px); /* Starts further down */
+      transform: translate(-50%, 20px);
       animation: bounceUp 3s ease-out forwards;
     }
 
@@ -43,7 +43,7 @@
         transform: translate(-50%, -5px) scale(1.1);
       }
       100% {
-        transform: translate(-50%, 20) scale(1); /* Final position */
+        transform: translate(-50%, 20px) scale(1); /* Corrected: 20px, not just 20 */
       }
     }
 
@@ -62,15 +62,40 @@
         text-shadow: none;
       }
     }
+
+    .subtitle {
+      position: absolute;
+      top: 180px; /* Appears below the header */
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: sans-serif;
+      font-size: 1.5rem;
+      color: #444;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+
+    .subtitle.show {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
+
   <div class="moving-text" id="movingText">chloe doodles</div>
+  <div class="subtitle" id="subtitle">graphic design</div>
 
   <script>
+    // After bounce, trigger glow
     setTimeout(() => {
       document.getElementById('movingText').classList.add('glow');
-    }, 3200); // glow after animation ends
+    }, 3200);
+
+    // After bounce + glow, show subtitle
+    setTimeout(() => {
+      document.getElementById('subtitle').classList.add('show');
+    }, 6200);
   </script>
+
 </body>
 </html>
