@@ -50,9 +50,31 @@ body {
         transform: translateX(-50%) scale(1);
       }
     }
+
+  .name-container.glow {
+      animation: glowEffect 1.5s ease-in-out 3.2s forwards;
+    }
+
+    @keyframes glowEffect {
+      0% {
+        text-shadow: none;
+      }
+      50% {
+        text-shadow: 0 0 15px #ff4f70, 0 0 25px #ff99b5;
+      }
+      100% {
+        text-shadow: none;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="moving-text">chloe doodles</div>
+<script>
+    // Add glow class slightly after moveToTop animation ends
+    setTimeout(() => {
+      document.getElementById('nameContainer').classList.add('glow');
+    }, 3200); // Wait 3.2s (bounce + moveToTop)
+  </script>
 </body>
 </html>
