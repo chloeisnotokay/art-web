@@ -48,7 +48,7 @@
     }
 
     .glow {
-      animation: glowEffect 3.0s ease-in-out forwards;
+      animation: glowEffect 2.5s ease-in-out forwards;
     }
 
     @keyframes glowEffect {
@@ -65,7 +65,7 @@
 
     .subtitle {
       position: absolute;
-      top: 200px; /* Appears below the header */
+      top: 190px; /* Appears below the header */
       left: 50%;
       transform: translateX(-50%);
       font-family: 'MyFont';
@@ -94,7 +94,7 @@
     // After bounce + glow, show subtitle
     setTimeout(() => {
       document.getElementById('subtitle').classList.add('show');
-    }, 6200);
+    }, 60000);
   </script>
 
 </body>
