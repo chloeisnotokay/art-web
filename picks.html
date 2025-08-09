@@ -68,7 +68,7 @@
     }
     .subtitle.show { opacity: 1; }
 
-    /* ===== Gallery container (sits in normal flow below header space) ===== */
+    /* ===== Content wrapper (sits below header space) ===== */
     .content {
       margin-top: var(--header-gap);
       max-width: 1200px;
@@ -84,34 +84,48 @@
       letter-spacing: 0.5px;
     }
 
+    /* ===== Gallery (3 columns, big images, organic spacing) ===== */
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(3, 1fr);   /* exactly 3 per row on desktop */
+      gap: 30px 50px;                          /* uneven: 30px row gap, 50px col gap */
+      justify-items: center;                   /* center within the cell */
     }
 
     .gallery-item {
-      position: relative;
-      aspect-ratio: 1 / 1;         /* perfect squares; change to 4/3 or 3/4 if you prefer */
+      width: 100%;
+      max-width: 380px;    /* make them big */
+      aspect-ratio: 4 / 5; /* tallish; change to 1/1 for squares */
       overflow: hidden;
-      border-radius: 10px;
+      border-radius: 12px;
       background: #eee;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      transition: transform 200ms ease;
     }
 
     .gallery-item img {
       width: 100%;
       height: 100%;
-      object-fit: cover;           /* fills the square nicely */
+      object-fit: cover;
       display: block;
       transition: transform 200ms ease, filter 200ms ease;
     }
 
+    .gallery-item:hover {
+      transform: translateY(-2px);
+    }
     .gallery-item:hover img {
       transform: scale(1.03);
       filter: brightness(0.95);
     }
 
-    /* Optional caption (hidden by default) */
+    /* Add subtle irregular vertical offsets for an organic vibe */
+    .gallery-item:nth-child(odd) { margin-top: 14px; }
+    .gallery-item:nth-child(3n)  { margin-top: -10px; }
+    .gallery-item:nth-child(6n+2){ margin-top: 8px; }
+    .gallery-item:nth-child(6n+5){ margin-top: -6px; }
+
+    /* Optional hover caption (off by default unless you add .caption) */
     .caption {
       position: absolute;
       left: 0; right: 0; bottom: 0;
@@ -124,11 +138,17 @@
     }
     .gallery-item:hover .caption { opacity: 1; }
 
-    @media (max-width: 520px) {
+    /* ===== Responsive ===== */
+    @media (max-width: 1050px) {
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+      .gallery-item { max-width: 420px; } /* let them breathe a bit on 2-col */
+    }
+    @media (max-width: 600px) {
       .moving-text { font-size: 3rem; top: 80px; }
       .subtitle { top: 150px; }
       :root { --header-gap: 210px; }
-      .gallery { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .gallery { grid-template-columns: 1fr; gap: 26px 28px; }
+      .gallery-item { max-width: 520px; margin-top: 0 !important; } /* kill offsets on 1-col */
     }
   </style>
 </head>
@@ -167,6 +187,7 @@
 
       images.forEach((img) => {
         const data = typeof img === 'string' ? { src: img } : img;
+
         const item = document.createElement('figure');
         item.className = 'gallery-item';
 
@@ -176,7 +197,7 @@
         image.src = data.src;
         image.alt = data.alt || 'gallery image';
 
-        // Optional simple lightbox on click (opens native)
+        // Simple "lightbox": open in new tab on click
         image.addEventListener('click', () => {
           window.open(data.src, '_blank');
         });
@@ -200,13 +221,13 @@
       { src: 'IMG_0003.jpg', alt: 'vector doodle 1' },
       { src: 'IMG_0006.jpg', alt: 'vector doodle 2' },
       { src: 'IMG_0522.jpg', alt: 'sticker sheet' },
-      { src: 'IMG_0003.jpg', alt: 'logo exploration' },
+      { src: 'IMG_0002.jpg', alt: 'logo exploration' },
       'images/piece-06.jpg',
       'images/piece-07.jpg',
-      'images/piece-08.jpg'
+      'images/piece-08.jpg',
+      'images/piece-09.jpg'
     ];
 
-    // Build the gallery after the title animation has started (no hard dependency needed)
     window.addEventListener('DOMContentLoaded', () => addGallery(images));
   </script>
 
