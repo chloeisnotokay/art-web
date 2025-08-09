@@ -31,16 +31,15 @@
       right: 20px;
       background: #ff4f70;
       color: white;
-      font-size: 0.95rem;
-      font-weight: bold;
-      padding: 10px 16px;
+      font-size: 1.1rem;
+      padding: 8px 16px;
       border-radius: 20px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.15);
       cursor: pointer;
       z-index: 10000;
       transition: background 0.2s ease, transform 0.2s ease;
       text-decoration: none;
-      font-family: sans-serif;
+      font-family: 'MyFont', serif; /* match header font */
     }
     .contact-tag:hover {
       background: #ff2f55;
@@ -103,11 +102,11 @@
       letter-spacing: 0.5px;
     }
 
-    /* ===== Gallery ===== */
+    /* ===== Gallery (aligned rows) ===== */
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 40px 60px; /* bigger gaps */
+      gap: 30px;
       justify-items: center;
     }
     .gallery-item {
@@ -132,12 +131,6 @@
     .gallery-item:hover { transform: translateY(-2px); }
     .gallery-item:hover img { transform: scale(1.03); filter: brightness(0.95); }
 
-    /* More exaggerated offsets */
-    .gallery-item:nth-child(odd) { margin-top: 35px; }
-    .gallery-item:nth-child(3n)  { margin-top: -25px; }
-    .gallery-item:nth-child(6n+2){ margin-top: 20px; }
-    .gallery-item:nth-child(6n+5){ margin-top: -15px; }
-
     .caption {
       position: absolute;
       left: 0; right: 0; bottom: 0;
@@ -158,8 +151,7 @@
       .moving-text { font-size: 3rem; top: 80px; }
       .subtitle { top: 150px; }
       :root { --header-gap: 210px; }
-      .gallery { grid-template-columns: 1fr; gap: 26px 28px; }
-      .gallery-item { margin-top: 0 !important; }
+      .gallery { grid-template-columns: 1fr; gap: 26px; }
     }
   </style>
 </head>
