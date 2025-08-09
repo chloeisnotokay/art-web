@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>chloe doodles</title>
   <style>
     @font-face {
@@ -9,92 +9,205 @@
       src: url('CloisterBlack.ttf') format('truetype');
     }
 
+    :root {
+      --header-gap: 240px; /* space reserved for the animated title + subtitle */
+      --page-padding: 16px;
+    }
+
     body {
       margin: 0;
       background-color: #fdfdfd;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow: auto; /* allow scrolling so we can see the gallery */
+      padding: var(--page-padding);
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     }
 
+    /* ===== Title + subtitle ===== */
     .moving-text {
-      font-family: 'MyFont', sans-serif;
+      font-family: 'MyFont', serif;
       font-size: 4rem;
-      color: #000000;
+      color: #000;
       position: absolute;
       top: 100px;
       left: 50%;
       transform: translate(-50%, 10px);
       animation: bounceUp 3s ease-out forwards;
+      text-align: center;
+      white-space: nowrap;
     }
 
     @keyframes bounceUp {
-      0% {
-        transform: translate(-50%, 200px) scale(0.5);
-        opacity: 0;
-      }
-      30% {
-        transform: translate(-50%, -30px) scale(1.3);
-        opacity: 1;
-      }
-      60% {
-        transform: translate(-50%, 10px) scale(0.9);
-      }
-      80% {
-        transform: translate(-50%, -5px) scale(1.1);
-      }
-      100% {
-        transform: translate(-50%, 10px) scale(1); /* Corrected: 20px, not just 20 */
-      }
+      0%   { transform: translate(-50%, 200px) scale(0.5); opacity: 0; }
+      30%  { transform: translate(-50%, -30px) scale(1.3); opacity: 1; }
+      60%  { transform: translate(-50%, 10px)  scale(0.9); }
+      80%  { transform: translate(-50%, -5px)  scale(1.1); }
+      100% { transform: translate(-50%, 10px)  scale(1); }
     }
 
-    .glow {
-      animation: glowEffect 2.5s ease-in-out forwards;
-    }
+    .glow { animation: glowEffect 2.5s ease-in-out forwards; }
 
     @keyframes glowEffect {
-      0% {
-        text-shadow: none;
-      }
-      50% {
-        text-shadow: 0 0 15px #ff4f70, 0 0 25px #ff99b5;
-      }
-      100% {
-        text-shadow: none;
-      }
+      0%   { text-shadow: none; }
+      50%  { text-shadow: 0 0 15px #ff4f70, 0 0 25px #ff99b5; }
+      100% { text-shadow: none; }
     }
 
     .subtitle {
       position: absolute;
-      top: 180px; /* Appears below the header */
+      top: 180px; /* under the header */
       left: 50%;
       transform: translateX(-50%);
-      font-family: 'MyFont';
+      font-family: 'MyFont', serif;
       font-size: 1.5rem;
       color: #444;
       opacity: 0;
       transition: opacity 1s ease-in;
+      white-space: nowrap;
+    }
+    .subtitle.show { opacity: 1; }
+
+    /* ===== Gallery container (sits in normal flow below header space) ===== */
+    .content {
+      margin-top: var(--header-gap);
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .subtitle.show {
-      opacity: 1;
+    .gallery-title {
+      font-family: 'MyFont', serif;
+      font-size: 1.6rem;
+      color: #111;
+      margin: 8px 4px 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-item {
+      position: relative;
+      aspect-ratio: 1 / 1;         /* perfect squares; change to 4/3 or 3/4 if you prefer */
+      overflow: hidden;
+      border-radius: 10px;
+      background: #eee;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;           /* fills the square nicely */
+      display: block;
+      transition: transform 200ms ease, filter 200ms ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.03);
+      filter: brightness(0.95);
+    }
+
+    /* Optional caption (hidden by default) */
+    .caption {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 6px 8px;
+      font-size: 0.85rem;
+      color: #fff;
+      background: linear-gradient(transparent, rgba(0,0,0,0.55));
+      opacity: 0;
+      transition: opacity 200ms ease;
+    }
+    .gallery-item:hover .caption { opacity: 1; }
+
+    @media (max-width: 520px) {
+      .moving-text { font-size: 3rem; top: 80px; }
+      .subtitle { top: 150px; }
+      :root { --header-gap: 210px; }
+      .gallery { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     }
   </style>
 </head>
 <body>
 
+  <!-- Animated title + subtitle -->
   <div class="moving-text" id="movingText">chloe doodles</div>
   <div class="subtitle" id="subtitle">graphic design</div>
 
+  <!-- Main content area with gallery below -->
+  <main class="content">
+    <div class="gallery-title">gallery</div>
+    <div id="gallery" class="gallery" aria-live="polite"></div>
+  </main>
+
   <script>
-    // After bounce, trigger glow
+    // Title glow after bounce
     setTimeout(() => {
       document.getElementById('movingText').classList.add('glow');
     }, 3000);
 
-    // After bounce + glow, show subtitle
+    // Subtitle reveal
     setTimeout(() => {
       document.getElementById('subtitle').classList.add('show');
     }, 5000);
+
+    /**
+     * addGallery(images)
+     * images: Array of strings or objects.
+     * - If string: treated as the src.
+     * - If object: { src, alt?, caption? }
+     */
+    function addGallery(images) {
+      const container = document.getElementById('gallery');
+      container.innerHTML = '';
+
+      images.forEach((img) => {
+        const data = typeof img === 'string' ? { src: img } : img;
+        const item = document.createElement('figure');
+        item.className = 'gallery-item';
+
+        const image = document.createElement('img');
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.src = data.src;
+        image.alt = data.alt || 'gallery image';
+
+        // Optional simple lightbox on click (opens native)
+        image.addEventListener('click', () => {
+          window.open(data.src, '_blank');
+        });
+
+        item.appendChild(image);
+
+        if (data.caption) {
+          const cap = document.createElement('figcaption');
+          cap.className = 'caption';
+          cap.textContent = data.caption;
+          item.appendChild(cap);
+        }
+
+        container.appendChild(item);
+      });
+    }
+
+    // ===== Example usage: replace these with your actual image paths =====
+    const images = [
+      { src: 'images/piece-01.jpg', alt: 'pink gradient poster', caption: 'poster: bloom' },
+      { src: 'images/piece-02.jpg', alt: 'vector doodle 1' },
+      { src: 'images/piece-03.jpg', alt: 'vector doodle 2' },
+      { src: 'images/piece-04.jpg', alt: 'sticker sheet' },
+      { src: 'images/piece-05.jpg', alt: 'logo exploration' },
+      'images/piece-06.jpg',
+      'images/piece-07.jpg',
+      'images/piece-08.jpg'
+    ];
+
+    // Build the gallery after the title animation has started (no hard dependency needed)
+    window.addEventListener('DOMContentLoaded', () => addGallery(images));
   </script>
 
 </body>
