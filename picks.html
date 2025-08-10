@@ -8,21 +8,11 @@
 
     :root{
       --header-gap:240px; --page-padding:16px;
-
-      /* colors */
       --bg-color:#fdfdfd; --mat-color:#efe9dc; --inner-stroke:#cbb79a;
 
-      /* default rectangular frame (for #1) */
-      --frame-src:url('ornate-gold-frame-eroded4.png');
+      /* defaults (per item can override) */
       --frame-slice:270; --frame-width:60px; --frame-mask:0px;
-
-      /* mat spacing */
       --mat-padding:20px;
-
-      /* OVAL: photo ellipse (inner) — bigger % shows more photo */
-      --oval-x:50%; --oval-y:46%;
-      /* OVAL: overlay ellipse (outer) — slightly bigger than photo to hide any rectangular bg in PNG */
-      --oval-outer-x:56%; --oval-outer-y:51%;
     }
 
     body{margin:0;background:var(--bg-color);min-height:100vh;overflow:auto;padding:var(--page-padding);box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -45,7 +35,7 @@
     @media (max-width:1220px){.gallery{grid-template-columns:repeat(2,1fr)} .gallery-item{max-width:clamp(280px,44vw,520px)}}
     @media (max-width:760px){.moving-text{font-size:3rem;top:80px}.subtitle{top:150px}:root{--header-gap:210px}.gallery{grid-template-columns:1fr}.gallery-item{max-width:560px}}
 
-    /* Rectangular frames */
+    /* rectangular frame */
     .frame{
       position:relative; overflow:hidden;
       border-style:solid; border-width:var(--frame-width);
@@ -56,28 +46,10 @@
     }
     .frame::after{content:"";position:absolute;inset:var(--frame-width);border:var(--frame-mask) solid var(--bg-color);pointer-events:none}
 
-    /* Oval overlay image */
-    .overlay{
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit:contain;      /* no cropping of the PNG */
-      pointer-events:none; display:none;
-    }
-
-    /* Mat + art */
     .mat{width:100%;height:100%;background:var(--mat-color);padding:var(--mat-padding);box-sizing:border-box;display:grid;place-items:center;box-shadow:inset 0 0 0 2px var(--inner-stroke), inset 0 0 0 4px rgba(255,255,255,.18)}
     .art{width:100%;height:100%;overflow:hidden}
     .art img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;background:transparent;transition:transform .2s ease,filter .2s ease;cursor:zoom-in}
     .gallery-item:hover .art img{transform:scale(1.02);filter:brightness(.96)}
-
-    /* OVAL MODE
-       - Only the PHOTO is clipped (visible mat ring)
-       - The OVERLAY is also clipped to a slightly bigger ellipse to hide any rectangular bg */
-    .frame.is-oval{border-width:0}
-    .frame.is-oval::after{border-width:0}
-    .frame.is-oval .overlay{display:block; clip-path:ellipse(var(--oval-outer-x) var(--oval-outer-y) at 50% 50%);}
-    .frame.is-oval .art, .frame.is-oval .art img{
-      clip-path:ellipse(var(--oval-x) var(--oval-y) at 50% 50%);
-    }
 
     .caption{position:absolute;left:0;right:0;bottom:0;padding:6px 8px;font-size:.85rem;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.55));opacity:0;transition:opacity .2s ease;pointer-events:none}
     .gallery-item:hover .caption{opacity:1}
@@ -85,7 +57,6 @@
 </head>
 <body>
   <a href="mailto:youremail@example.com" class="contact-tag">Contact Me</a>
-
   <div class="moving-text" id="movingText">chloe doodles</div>
   <div class="subtitle" id="subtitle">graphic design</div>
 
@@ -98,48 +69,36 @@
     setTimeout(()=>document.getElementById('movingText').classList.add('glow'),3000);
     setTimeout(()=>document.getElementById('subtitle').classList.add('show'),5000);
 
-    /* Per-item: you can override ovalX/ovalY (photo clip) and ovalOuterX/ovalOuterY (overlay clip) */
+    /* All rectangular frames now */
     const images = [
-      // 1) Ornate gold (rect)
+      // 1) keep your original ornate gold (rect)
       { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
         caption:'collide with the sky pencil pouch',
-        shape:'rect',
         frameSrc:'ornate-gold-frame-eroded4.png', frameSlice:270, frameWidth:60, frameMask:0
       },
 
-      // 2) Gold oval (overlay) — eroded3
+      // 2) REPLACED gold oval → gold ornate eroded3 (rect)
       { src:'IMG_0003.jpg', alt:'misadventures jeans',
         caption:'misadventures jeans',
-        shape:'oval',
-        frameSrc:'frame-oval-gold-transparent-trimmed-eroded3.png',
-        matPadding:20,
-        /* Slightly larger overlay clip to hide any background */
-        ovalX:'50%', ovalY:'46%',           // photo ellipse
-        ovalOuterX:'57%', ovalOuterY:'52%'  // overlay ellipse
+        frameSrc:'frame-gold-ornate-01-transparent-trimmed-eroded3.png', frameSlice:174, frameWidth:60, frameMask:0
       },
 
-      // 3) Black ornate (rect) — eroded3
+      // 3) black ornate eroded3 (rect)
       { src:'IMG_0006.jpg', alt:'misadventures bandana',
         caption:'misadventures bandana',
-        shape:'rect',
-        frameSrc:'frame-black-ornate-transparent-trimmed-eroded3.png', frameSlice:118, frameWidth:58, frameMask:0
+        frameSrc:'frame-black-ornate-02-transparent-trimmed-eroded3.png', frameSlice:208, frameWidth:60, frameMask:0
       },
 
-      // 4) Silver ornate (rect) — eroded3
+      // 4) REPLACED silver → gold antique eroded3 (rect)
       { src:'IMG_0522.jpg', alt:'3 cheers for sweet revenge tote',
         caption:'3 cheers for sweet revenge tote',
-        shape:'rect',
-        frameSrc:'frame-silver-transparent-trimmed-eroded3.png', frameSlice:301, frameWidth:60, frameMask:0
+        frameSrc:'frame-gold-antique-03-transparent-trimmed-eroded3.png', frameSlice:109, frameWidth:60, frameMask:0
       },
 
-      // 5) Black oval (overlay) — eroded3
+      // 5) REPLACED black oval → black ornate eroded3 (rect)
       { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
         caption:'collide with the sky pencil pouch',
-        shape:'oval',
-        frameSrc:'frame-oval-black-transparent-trimmed-eroded3.png',
-        matPadding:20,
-        ovalX:'50%', ovalY:'46%',
-        ovalOuterX:'56%', ovalOuterY:'51%'
+        frameSrc:'frame-black-ornate-02-transparent-trimmed-eroded3.png', frameSlice:208, frameWidth:60, frameMask:0
       }
     ];
 
@@ -151,45 +110,17 @@
         const fig=document.createElement('figure'); fig.className='gallery-item';
 
         const frame=document.createElement('div'); frame.className='frame';
-        frame.style.setProperty('--frame-mask', getComputedStyle(document.documentElement).getPropertyValue('--frame-mask'));
+        frame.style.borderImageSource = `url('${data.frameSrc}')`;
+        frame.style.borderImageSlice  = String(data.frameSlice ?? getComputedStyle(document.documentElement).getPropertyValue('--frame-slice'));
+        frame.style.borderWidth       = `${data.frameWidth ?? parseInt(getComputedStyle(document.documentElement).getPropertyValue('--frame-width'))}px`;
+        frame.style.setProperty('--frame-mask', `${data.frameMask ?? 0}px`);
 
         const mat=document.createElement('div'); mat.className='mat';
-        if(typeof data.matPadding==='number'){ mat.style.setProperty('--mat-padding', `${data.matPadding}px`); }
-
         const art=document.createElement('div'); art.className='art';
-        const img=document.createElement('img'); img.loading='lazy'; img.decoding='async';
-        img.src=data.src; img.alt=data.alt || `gallery image ${idx+1}`;
-        art.appendChild(img); mat.appendChild(art);
+        const img=document.createElement('img'); img.loading='lazy'; img.decoding='async'; img.src=data.src; img.alt=data.alt || `gallery image ${idx+1}`;
+        art.appendChild(img); mat.appendChild(art); frame.appendChild(mat); fig.appendChild(frame);
 
-        const overlay=document.createElement('img'); overlay.className='overlay'; overlay.alt=''; overlay.decoding='async'; overlay.loading='lazy';
-
-        if(data.shape === 'oval'){
-          frame.classList.add('is-oval');
-          overlay.src = data.frameSrc;
-
-          // per-item photo ellipse
-          if (data.ovalX) frame.style.setProperty('--oval-x', data.ovalX);
-          if (data.ovalY) frame.style.setProperty('--oval-y', data.ovalY);
-
-          // per-item overlay ellipse
-          if (data.ovalOuterX) frame.style.setProperty('--oval-outer-x', data.ovalOuterX);
-          if (data.ovalOuterY) frame.style.setProperty('--oval-outer-y', data.ovalOuterY);
-        } else {
-          frame.style.borderImageSource = `url('${data.frameSrc}')`;
-          if(typeof data.frameSlice==='number') frame.style.borderImageSlice = String(data.frameSlice);
-          if(typeof data.frameWidth==='number') frame.style.borderWidth = `${data.frameWidth}px`;
-          if(typeof data.frameMask==='number') frame.style.setProperty('--frame-mask', `${data.frameMask}px`);
-        }
-
-        frame.appendChild(mat);
-        frame.appendChild(overlay);
-        fig.appendChild(frame);
-
-        if(data.caption){
-          const cap=document.createElement('figcaption');
-          cap.className='caption'; cap.textContent=data.caption; fig.appendChild(cap);
-        }
-
+        if(data.caption){ const cap=document.createElement('figcaption'); cap.className='caption'; cap.textContent=data.caption; fig.appendChild(cap); }
         container.appendChild(fig);
       });
     }
