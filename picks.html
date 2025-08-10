@@ -71,35 +71,39 @@
 
     /* All rectangular frames now */
     const images = [
-      // 1) keep your original ornate gold (rect)
-      { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
-        caption:'collide with the sky pencil pouch',
-        frameSrc:'ornate-gold-frame-eroded4.png', frameSlice:270, frameWidth:60, frameMask:0
-      },
+  // 1) keep as-is
+  { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
+    caption:'collide with the sky pencil pouch',
+    frameSrc:'ornate-gold-frame-eroded4.png', frameSlice:270, frameWidth:60, frameMask:0
+  },
 
-      // 2) REPLACED gold oval → gold ornate eroded3 (rect)
-      { src:'IMG_0003.jpg', alt:'misadventures jeans',
-        caption:'misadventures jeans',
-        frameSrc:'frame-gold-ornate-01-transparent-trimmed-eroded3.png', frameSlice:174, frameWidth:60, frameMask:0
-      },
+  // 2) simple gold (e6b5... eroded3)
+  { src:'IMG_0003.jpg', alt:'misadventures jeans',
+    caption:'misadventures jeans',
+    frameSrc:'e6b5d4c9e2f8ca0a87ea7ef0484ca568-transparent-trimmed-eroded3.png',
+    frameSlice:34, frameWidth:60, frameMask:0
+  },
 
-      // 3) black ornate eroded3 (rect)
-      { src:'IMG_0006.jpg', alt:'misadventures bandana',
-        caption:'misadventures bandana',
-        frameSrc:'frame-black-ornate-02-transparent-trimmed-eroded3.png', frameSlice:208, frameWidth:60, frameMask:0
-      },
+  // 3) gold ornate (51e463... eroded3)
+  { src:'IMG_0006.jpg', alt:'misadventures bandana',
+    caption:'misadventures bandana',
+    frameSrc:'51e463fe67cd411f414a33e7d6ecd51f-transparent-trimmed-eroded3.png',
+    frameSlice:129, frameWidth:60, frameMask:0
+  },
 
-      // 4) REPLACED silver → gold antique eroded3 (rect)
-      { src:'IMG_0522.jpg', alt:'3 cheers for sweet revenge tote',
-        caption:'3 cheers for sweet revenge tote',
-        frameSrc:'frame-gold-antique-03-transparent-trimmed-eroded3.png', frameSlice:109, frameWidth:60, frameMask:0
-      },
+  // 4) gold antique (keep)
+  { src:'IMG_0522.jpg', alt:'3 cheers for sweet revenge tote',
+    caption:'3 cheers for sweet revenge tote',
+    frameSrc:'frame-gold-antique-03-transparent-trimmed-eroded3.png',
+    frameSlice:109, frameWidth:60, frameMask:0
+  },
 
-      // 5) REPLACED black oval → black ornate eroded3 (rect)
-      { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
-        caption:'collide with the sky pencil pouch',
-        frameSrc:'frame-black-ornate-02-transparent-trimmed-eroded3.png', frameSlice:208, frameWidth:60, frameMask:0
-      }
+  // 5) black ornate (keep)
+  { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
+    caption:'collide with the sky pencil pouch',
+    frameSrc:'frame-black-ornate-02-transparent-trimmed-eroded3.png',
+    frameSlice:208, frameWidth:60, frameMask:0
+  }
     ];
 
     function addGallery(items){
