@@ -19,14 +19,14 @@
       --mat-color: #efe9dc;  /* tan museum mat */
       --inner-stroke: #cbb79a;
 
-      /* frame tuning */
-      --frame-src: url('ornate-gold-frame-eroded4.png'); /* cleaned PNG you chose */
-      --frame-slice: 270;    /* nudge ±10–30 if corners look off */
-      --frame-width: 60px;   /* visible gold thickness */
-      --frame-mask: 2px;     /* anti-halo ring thickness */
+      /* frame */
+      --frame-src: url('ornate-gold-frame-eroded4.png'); /* cleaned PNG */
+      --frame-slice: 270;
+      --frame-width: 60px;
+      --frame-mask: 0px;     /* anti-halo ring (0 = off; set to 1–2px if needed) */
 
-      /* spacing between art and frame (mat thickness) */
-      --mat-padding: 14px;   /* increase/decrease to taste */
+      /* spacing between frame & art */
+      --mat-padding: 14px;   /* thickness of mat around the photo */
     }
 
     body {
@@ -42,16 +42,12 @@
     /* ===== Contact tag ===== */
     .contact-tag {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #000;
-      color: #fff;
-      font-size: 1.1rem;
-      padding: 8px 16px;
+      top: 20px; right: 20px;
+      background: #000; color: #fff;
+      font-size: 1.1rem; padding: 8px 16px;
       border-radius: 20px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      cursor: pointer;
-      z-index: 10000;
+      cursor: pointer; z-index: 10000;
       transition: background 0.2s ease, transform 0.2s ease;
       text-decoration: none;
       font-family: 'MyFont', serif;
@@ -61,16 +57,11 @@
     /* ===== Title + subtitle ===== */
     .moving-text {
       font-family: 'MyFont', serif;
-      font-size: 4rem;
-      color: #000;
-      position: absolute;
-      top: 100px;
-      left: 50%;
+      font-size: 4rem; color: #000;
+      position: absolute; top: 100px; left: 50%;
       transform: translate(-50%, 10px);
       animation: bounceUp 3s ease-out forwards;
-      text-align: center;
-      white-space: nowrap;
-      z-index: 2; /* stays above content */
+      text-align: center; white-space: nowrap; z-index: 2;
     }
     @keyframes bounceUp {
       0%   { transform: translate(-50%, 200px) scale(0.5); opacity: 0; }
@@ -87,17 +78,10 @@
     }
 
     .subtitle {
-      position: absolute;
-      top: 180px;
-      left: 50%;
+      position: absolute; top: 180px; left: 50%;
       transform: translateX(-50%);
-      font-family: 'MyFont', serif;
-      font-size: 1.5rem;
-      color: #444;
-      opacity: 0;
-      transition: opacity 1s ease-in;
-      white-space: nowrap;
-      z-index: 2;
+      font-family: 'MyFont', serif; font-size: 1.5rem; color: #444;
+      opacity: 0; transition: opacity 1s ease-in; white-space: nowrap; z-index: 2;
     }
     .subtitle.show { opacity: 1; }
 
@@ -105,32 +89,41 @@
     .content {
       margin-top: var(--header-gap);
       max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-left: auto; margin-right: auto;
     }
     .gallery-title {
       font-family: 'MyFont', serif;
-      font-size: 1.6rem;
-      color: #111;
-      margin: 8px 4px 14px;
-      letter-spacing: 0.5px;
+      font-size: 1.6rem; color: #111;
+      margin: 8px 4px 14px; letter-spacing: 0.5px;
     }
 
-    /* ===== Gallery ===== */
+    /* ===== Gallery (responsive) ===== */
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
+      gap: clamp(16px, 2vw, 30px);
       justify-items: center;
     }
     .gallery-item {
       width: 100%;
-      max-width: 380px;
+      max-width: clamp(260px, 31vw, 360px); /* flex so 3 cols don't clip */
       aspect-ratio: 4 / 5;
       position: relative;
     }
 
-    /* Frame */
+    @media (max-width: 1220px) {
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+      .gallery-item { max-width: clamp(280px, 44vw, 520px); }
+    }
+    @media (max-width: 760px) {
+      .moving-text { font-size: 3rem; top: 80px; }
+      .subtitle { top: 150px; }
+      :root { --header-gap: 210px; }
+      .gallery { grid-template-columns: 1fr; }
+      .gallery-item { max-width: 560px; }
+    }
+
+    /* ===== Frame ===== */
     .frame {
       position: relative;
       border-style: solid;
@@ -139,12 +132,10 @@
       border-image-slice: var(--frame-slice);
       border-image-repeat: round;
       border-image-width: 1;
-      background: transparent; /* lets page bg show under inner bevel */
-      display: grid;
-      place-items: center;
+      background: transparent;   /* bg shows under inner bevel */
+      display: grid; place-items: center;
     }
-
-    /* Anti-halo ring at inner edge */
+    /* Anti-halo ring (off by default; set --frame-mask to 1–2px if needed) */
     .frame::after {
       content: "";
       position: absolute;
@@ -153,54 +144,34 @@
       pointer-events: none;
     }
 
-    /* Mat fills frame, spacing comes from padding (keeps image centered) */
+    /* ===== Mat (padding keeps image centered, no white box) ===== */
     .mat {
-      width: 100%;
-      height: 100%;
-      background: var(--mat-color);      /* TAN mat is back */
-      padding: var(--mat-padding);       /* distance from frame to art */
+      width: 100%; height: 100%;
+      background: var(--mat-color);
+      padding: var(--mat-padding);
       box-sizing: border-box;
-      display: grid;
-      place-items: center;
+      display: grid; place-items: center;
       box-shadow:
         inset 0 0 0 2px var(--inner-stroke),
-        inset 0 0 0 8px rgba(255,255,255,0.35);
+        inset 0 0 0 4px rgba(255,255,255,0.18); /* softer bevel */
     }
-
     .art { width: 100%; height: 100%; overflow: hidden; }
     .art img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;  /* image fills area without distortion */
-      display: block;
-      background: none;   /* no white box */
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center center;
+      display: block; background: transparent;
       transition: transform 200ms ease, filter 200ms ease;
       cursor: zoom-in;
     }
     .gallery-item:hover .art img { transform: scale(1.02); filter: brightness(0.96); }
 
     .caption {
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      padding: 6px 8px;
-      font-size: 0.85rem;
-      color: #fff;
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 6px 8px; font-size: 0.85rem; color: #fff;
       background: linear-gradient(transparent, rgba(0,0,0,0.55));
-      opacity: 0;
-      transition: opacity 200ms ease;
-      pointer-events: none;
+      opacity: 0; transition: opacity 200ms ease; pointer-events: none;
     }
     .gallery-item:hover .caption { opacity: 1; }
-
-    @media (max-width: 1050px) {
-      .gallery { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 600px) {
-      .moving-text { font-size: 3rem; top: 80px; }
-      .subtitle { top: 150px; }
-      :root { --header-gap: 210px; }
-      .gallery { grid-template-columns: 1fr; gap: 26px; }
-    }
   </style>
 </head>
 <body>
@@ -219,6 +190,7 @@
   </main>
 
   <script>
+    // Header effects
     setTimeout(() => document.getElementById('movingText').classList.add('glow'), 3000);
     setTimeout(() => document.getElementById('subtitle').classList.add('show'), 5000);
 
