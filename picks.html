@@ -12,6 +12,13 @@
     :root {
       --header-gap: 240px;
       --page-padding: 16px;
+
+      /* Frame tuning */
+      --frame-src: url(''); /* put your ornate PNG here (transparent center) */
+      --frame-slice: 160;   /* how far to slice from each edge of the PNG (pixels) */
+      --frame-width: 38px;  /* visual thickness of the frame on the page */
+      --mat-color: #efe9dc; /* “museum mat” color */
+      --inner-stroke: #cbb79a; /* thin inner liner color */
     }
 
     body {
@@ -39,12 +46,9 @@
       z-index: 10000;
       transition: background 0.2s ease, transform 0.2s ease;
       text-decoration: none;
-      font-family: 'MyFont', serif; /* match header font */
+      font-family: 'MyFont', serif;
     }
-    .contact-tag:hover {
-      background: #ff2f55;
-      transform: translateY(-2px);
-    }
+    .contact-tag:hover { background: #ff2f55; transform: translateY(-2px); }
 
     /* ===== Title + subtitle ===== */
     .moving-text {
@@ -68,8 +72,8 @@
     }
     .glow { animation: glowEffect 2.5s ease-in-out forwards; }
     @keyframes glowEffect {
-      0%   { text-shadow: none; }
-      50%  { text-shadow: 0 0 15px #ff4f70, 0 0 25px #ff99b5; }
+      0% { text-shadow: none; }
+      50% { text-shadow: 0 0 15px #ff4f70, 0 0 25px #ff99b5; }
       100% { text-shadow: none; }
     }
 
@@ -109,27 +113,95 @@
       gap: 30px;
       justify-items: center;
     }
+
+    /* Outer figure */
     .gallery-item {
       width: 100%;
       max-width: 380px;
       aspect-ratio: 4 / 5;
-      overflow: hidden;
-      border-radius: 12px;
-      background: #eee;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-      transition: transform 200ms ease;
+      position: relative;
+      /* no rounding so frame corners look crisp */
+    }
+
+    /* 1) REAL vintage frame using border-image (requires PNG asset with transparent center) */
+    .frame {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-style: solid;
+      border-width: var(--frame-width);
+      /* 9-slice the source frame: adjust slice to match your PNG’s border thickness */
+      -webkit-border-image: var(--frame-src) var(--frame-slice) round;
+      border-image: var(--frame-src) var(--frame-slice) round;
+      background: var(--mat-color); /* mat background behind the art */
+      display: grid;
+      place-items: center;
+      box-shadow:
+        0 3px 6px rgba(0,0,0,0.18),
+        0 12px 28px rgba(0,0,0,0.22);
       position: relative;
     }
-    .gallery-item img {
+
+    /* “Mat” padding inside the frame; tweak for wider/narrower mat */
+    .mat {
+      width: calc(100% - 26px);
+      height: calc(100% - 26px);
+      background: var(--mat-color);
+      position: relative;
+      box-shadow: inset 0 0 0 2px var(--inner-stroke), inset 0 0 0 8px rgba(255,255,255,0.35);
+      display: grid;
+      place-items: center;
+    }
+
+    .art {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .art img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
       transition: transform 200ms ease, filter 200ms ease;
-      cursor: zoom-in; /* visual cue; click opens lightbox */
+      cursor: zoom-in; /* click opens lightbox */
     }
-    .gallery-item:hover { transform: translateY(-2px); }
-    .gallery-item:hover img { transform: scale(1.03); filter: brightness(0.95); }
+
+    .gallery-item:hover .art img { transform: scale(1.02); filter: brightness(0.96); }
+
+    /* 2) Fallback CSS-only frame if no PNG is present
+       (apply .css-frame instead of .frame on the wrapper to use this) */
+    .css-frame {
+      width: 100%;
+      height: 100%;
+      background: var(--mat-color);
+      position: relative;
+      display: grid;
+      place-items: center;
+      box-shadow:
+        0 3px 6px rgba(0,0,0,0.18),
+        0 12px 28px rgba(0,0,0,0.22);
+    }
+    .css-frame::before {
+      /* outer “wood” band */
+      content: "";
+      position: absolute;
+      inset: -14px;
+      background: linear-gradient(135deg, #9b7c4a, #6e532c);
+      box-shadow: inset 0 0 0 6px rgba(255,255,255,0.08), inset 0 0 0 12px rgba(0,0,0,0.2);
+      z-index: 0;
+    }
+    .css-frame::after {
+      /* inner thin liner */
+      content: "";
+      position: absolute;
+      inset: 8px;
+      box-shadow: inset 0 0 0 2px var(--inner-stroke);
+      border: 6px solid rgba(255,255,255,0.4);
+      z-index: 1;
+      pointer-events: none;
+    }
 
     .caption {
       position: absolute;
@@ -207,7 +279,6 @@
     .lb-btn:hover { background: rgba(255,255,255,0.18); transform: translateY(-50%) scale(1.04); }
     .lb-prev { left: 18px; }
     .lb-next { right: 18px; }
-
     .lb-close {
       position: absolute;
       top: 16px; right: 16px;
@@ -240,7 +311,7 @@
     <div id="gallery" class="gallery"></div>
   </main>
 
-  <!-- Lightbox modal (needed for zoom) -->
+  <!-- Lightbox modal -->
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
     <button class="lb-close" id="lbClose" aria-label="Close (Esc)">✕</button>
     <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous (←)">‹</button>
@@ -250,38 +321,56 @@
   </div>
 
   <script>
-    // Glow + subtitle timing
+    // Header effects
     setTimeout(() => document.getElementById('movingText').classList.add('glow'), 3000);
     setTimeout(() => document.getElementById('subtitle').classList.add('show'), 5000);
 
-    // Build gallery
+    // Build gallery with frame + mat
     function addGallery(images) {
       const container = document.getElementById('gallery');
       container.innerHTML = '';
+
       images.forEach((img, idx) => {
         const data = typeof img === 'string' ? { src: img } : img;
-        const item = document.createElement('figure');
-        item.className = 'gallery-item';
+
+        const fig = document.createElement('figure');
+        fig.className = 'gallery-item';
+
+        // Choose frame type: use .frame (border-image PNG) by default
+        const frame = document.createElement('div');
+        frame.className = 'frame'; // swap to 'css-frame' if you want the pure-CSS version
+
+        const mat = document.createElement('div');
+        mat.className = 'mat';
+
+        const art = document.createElement('div');
+        art.className = 'art';
 
         const image = document.createElement('img');
         image.loading = 'lazy';
         image.decoding = 'async';
         image.src = data.src;
-        image.alt = data.alt || 'gallery image';
+        image.alt = data.alt || `gallery image ${idx + 1}`;
 
-        // CLICK HANDLER TO OPEN LIGHTBOX (this is what makes "zoom" work)
-        image.addEventListener('click', () => openLightbox(idx));
+        // Click anywhere on framed art opens lightbox
+        [image, art, mat].forEach(el => {
+          el.addEventListener('click', () => openLightbox(idx));
+          el.style.cursor = 'zoom-in';
+        });
 
-        item.appendChild(image);
+        art.appendChild(image);
+        mat.appendChild(art);
+        frame.appendChild(mat);
+        fig.appendChild(frame);
 
         if (data.caption) {
           const cap = document.createElement('figcaption');
           cap.className = 'caption';
           cap.textContent = data.caption;
-          item.appendChild(cap);
+          fig.appendChild(cap);
         }
 
-        container.appendChild(item);
+        container.appendChild(fig);
       });
     }
 
@@ -291,9 +380,7 @@
       { src: 'IMG_0003.jpg', alt: 'misadventures jeans', caption: 'misadventures jeans' },
       { src: 'IMG_0006.jpg', alt: 'misadventures bandana', caption: 'misadventures bandana' },
       { src: 'IMG_0522.jpg', alt: '3 cheers for sweet revenge tote', caption: '3 cheers for sweet revenge tote' },
-      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' },
-      'images/piece-06.jpg',
-      'images/piece-07.jpg'
+      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' }
     ];
 
     // ===== Lightbox logic =====
@@ -342,14 +429,8 @@
       });
     }
 
-    function nextImage() {
-      currentIndex = (currentIndex + 1) % images.length;
-      renderLightbox();
-    }
-    function prevImage() {
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      renderLightbox();
-    }
+    function nextImage() { currentIndex = (currentIndex + 1) % images.length; renderLightbox(); }
+    function prevImage() { currentIndex = (currentIndex - 1 + images.length) % images.length; renderLightbox(); }
 
     // Buttons
     lbNext.addEventListener('click', nextImage);
@@ -357,11 +438,9 @@
     lbClose.addEventListener('click', closeLightbox);
 
     // Click outside image closes
-    lb.addEventListener('click', (e) => {
-      if (e.target === lb) closeLightbox();
-    });
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
 
-    // Keyboard controls
+    // Keyboard
     document.addEventListener('keydown', (e) => {
       if (!lb.classList.contains('open')) return;
       if (e.key === 'Escape') closeLightbox();
@@ -369,7 +448,7 @@
       if (e.key === 'ArrowLeft') prevImage();
     });
 
-    // Swipe controls
+    // Swipe
     lb.addEventListener('touchstart', (e) => {
       const t = e.changedTouches[0];
       touchStartX = t.clientX;
@@ -381,9 +460,7 @@
       const t = e.changedTouches[0];
       const dx = t.clientX - touchStartX;
       const dy = t.clientY - touchStartY;
-      const absX = Math.abs(dx), absY = Math.abs(dy);
-
-      if (absX > 40 && absX > absY) {
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
         if (dx < 0) nextImage(); else prevImage();
       }
       touchStartX = touchStartY = null;
