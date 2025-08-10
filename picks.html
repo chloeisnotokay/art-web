@@ -4,222 +4,93 @@
   <meta charset="UTF-8" />
   <title>chloe doodles</title>
   <style>
-    @font-face {
-      font-family: 'MyFont';
-      src: url('CloisterBlack.ttf') format('truetype');
+    @font-face { font-family: 'MyFont'; src: url('CloisterBlack.ttf') format('truetype'); }
+
+    :root{
+      --header-gap:240px; --page-padding:16px;
+      --bg-color:#fdfdfd; --mat-color:#efe9dc; --inner-stroke:#cbb79a;
+
+      /* default rectangular frame (can be overridden per picture) */
+      --frame-src:url('ornate-gold-frame-eroded4.png');
+      --frame-slice:270; --frame-width:60px; --frame-mask:0px;
+
+      --mat-padding:20px; /* bigger mat */
+      /* oval clip tweak (percent radii) */
+      --oval-x:48%; --oval-y:44%;
     }
 
-    :root {
-      /* layout */
-      --header-gap: 240px;
-      --page-padding: 16px;
+    body{margin:0;background:var(--bg-color);min-height:100vh;overflow:auto;padding:var(--page-padding);box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 
-      /* colors */
-      --bg-color: #fdfdfd;   /* page background */
-      --mat-color: #efe9dc;  /* tan museum mat */
-      --inner-stroke: #cbb79a;
+    .contact-tag{position:fixed;top:20px;right:20px;background:#000;color:#fff;font-size:1.1rem;padding:8px 16px;border-radius:20px;box-shadow:0 4px 8px rgba(0,0,0,.15);cursor:pointer;z-index:10000;transition:.2s;text-decoration:none;font-family:'MyFont',serif}
+    .contact-tag:hover{background:#ff2f55;transform:translateY(-2px)}
 
-      /* default frame (used unless overridden per item) */
-      --frame-src: url('ornate-gold-frame-eroded4.png'); /* cleaned PNG */
-      --frame-slice: 270;
-      --frame-width: 60px;
-      --frame-mask: 0px;     /* 0 = off; set to 1–2px if a halo sneaks in */
+    .moving-text{font-family:'MyFont',serif;font-size:4rem;color:#000;position:absolute;top:100px;left:50%;transform:translate(-50%,10px);animation:bounceUp 3s ease-out forwards;text-align:center;white-space:nowrap;z-index:2}
+    @keyframes bounceUp{0%{transform:translate(-50%,200px) scale(.5);opacity:0}30%{transform:translate(-50%,-30px) scale(1.3);opacity:1}60%{transform:translate(-50%,10px) scale(.9)}80%{transform:translate(-50%,-5px) scale(1.1)}100%{transform:translate(-50%,10px) scale(1)}}
+    .glow{animation:glowEffect 2.5s ease-in-out forwards}
+    @keyframes glowEffect{0%{text-shadow:none}50%{text-shadow:0 0 15px #ff4f70,0 0 25px #ff99b5}100%{text-shadow:none}}
+    .subtitle{position:absolute;top:180px;left:50%;transform:translateX(-50%);font-family:'MyFont',serif;font-size:1.5rem;color:#444;opacity:0;transition:opacity 1s ease-in;white-space:nowrap;z-index:2}
+    .subtitle.show{opacity:1}
 
-      /* default mat thickness (padding inside the mat) */
-      --mat-padding: 20px;   /* made bigger per your request */
-    }
+    .content{margin-top:var(--header-gap);max-width:1200px;margin-left:auto;margin-right:auto}
+    .gallery-title{font-family:'MyFont',serif;font-size:1.6rem;color:#111;margin:8px 4px 14px;letter-spacing:.5px}
 
-    body {
-      margin: 0;
-      background: var(--bg-color);
-      min-height: 100vh;
-      overflow: auto;
-      padding: var(--page-padding);
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
+    /* gallery */
+    .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,30px);justify-items:center}
+    .gallery-item{width:100%;max-width:clamp(260px,31vw,360px);aspect-ratio:4/5;position:relative}
+    @media (max-width:1220px){.gallery{grid-template-columns:repeat(2,1fr)} .gallery-item{max-width:clamp(280px,44vw,520px)}}
+    @media (max-width:760px){.moving-text{font-size:3rem;top:80px}.subtitle{top:150px}:root{--header-gap:210px}.gallery{grid-template-columns:1fr}.gallery-item{max-width:560px}}
 
-    /* ===== Contact tag ===== */
-    .contact-tag {
-      position: fixed;
-      top: 20px; right: 20px;
-      background: #000; color: #fff;
-      font-size: 1.1rem; padding: 8px 16px;
-      border-radius: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      cursor: pointer; z-index: 10000;
-      transition: background 0.2s ease, transform 0.2s ease;
-      text-decoration: none;
-      font-family: 'MyFont', serif;
-    }
-    .contact-tag:hover { background: #ff2f55; transform: translateY(-2px); }
+    /* frame (rectangular mode) */
+    .frame{position:relative;border-style:solid;border-width:var(--frame-width);
+      border-image-source:var(--frame-src);border-image-slice:var(--frame-slice);
+      border-image-repeat:round;border-image-width:1;background:transparent;
+      display:grid;place-items:center}
+    .frame::after{content:"";position:absolute;inset:var(--frame-width);border:var(--frame-mask) solid var(--bg-color);pointer-events:none}
 
-    /* ===== Title + subtitle ===== */
-    .moving-text {
-      font-family: 'MyFont', serif;
-      font-size: 4rem; color: #000;
-      position: absolute; top: 100px; left: 50%;
-      transform: translate(-50%, 10px);
-      animation: bounceUp 3s ease-out forwards;
-      text-align: center; white-space: nowrap; z-index: 2;
-    }
-    @keyframes bounceUp {
-      0%   { transform: translate(-50%, 200px) scale(0.5); opacity: 0; }
-      30%  { transform: translate(-50%, -30px) scale(1.3); opacity: 1; }
-      60%  { transform: translate(-50%, 10px)  scale(0.9); }
-      80%  { transform: translate(-50%, -5px)  scale(1.1); }
-      100% { transform: translate(-50%, 10px)  scale(1); }
-    }
-    .glow { animation: glowEffect 2.5s ease-in-out forwards; }
-    @keyframes glowEffect {
-      0% { text-shadow: none; }
-      50% { text-shadow: 0 0 15px #ff4f70, 0 0 25px #ff99b5; }
-      100% { text-shadow: none; }
+    /* overlay image used for oval mode */
+    .overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;display:none}
+
+    /* mat + art */
+    .mat{width:100%;height:100%;background:var(--mat-color);padding:var(--mat-padding);box-sizing:border-box;display:grid;place-items:center;box-shadow:inset 0 0 0 2px var(--inner-stroke), inset 0 0 0 4px rgba(255,255,255,.18)}
+    .art{width:100%;height:100%;overflow:hidden}
+    .art img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;background:transparent;transition:transform .2s ease,filter .2s ease;cursor:zoom-in}
+    .gallery-item:hover .art img{transform:scale(1.02);filter:brightness(.96)}
+
+    /* OVAL MODE — disable border-image, use overlay + ellipse clip */
+    .frame.is-oval{border-width:0}
+    .frame.is-oval::after{border-width:0}
+    .frame.is-oval .overlay{display:block}
+    .frame.is-oval .mat, .frame.is-oval .art, .frame.is-oval .art img{
+      clip-path:ellipse(var(--oval-x) var(--oval-y) at 50% 50%);
     }
 
-    .subtitle {
-      position: absolute; top: 180px; left: 50%;
-      transform: translateX(-50%);
-      font-family: 'MyFont', serif; font-size: 1.5rem; color: #444;
-      opacity: 0; transition: opacity 1s ease-in; white-space: nowrap; z-index: 2;
-    }
-    .subtitle.show { opacity: 1; }
-
-    /* ===== Content ===== */
-    .content {
-      margin-top: var(--header-gap);
-      max-width: 1200px;
-      margin-left: auto; margin-right: auto;
-    }
-    .gallery-title {
-      font-family: 'MyFont', serif;
-      font-size: 1.6rem; color: #111;
-      margin: 8px 4px 14px; letter-spacing: 0.5px;
-    }
-
-    /* ===== Gallery (responsive) ===== */
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(16px, 2vw, 30px);
-      justify-items: center;
-    }
-    .gallery-item {
-      width: 100%;
-      max-width: clamp(260px, 31vw, 360px); /* flex so 3 cols don't clip */
-      aspect-ratio: 4 / 5;
-      position: relative;
-    }
-
-    @media (max-width: 1220px) {
-      .gallery { grid-template-columns: repeat(2, 1fr); }
-      .gallery-item { max-width: clamp(280px, 44vw, 520px); }
-    }
-    @media (max-width: 760px) {
-      .moving-text { font-size: 3rem; top: 80px; }
-      .subtitle { top: 150px; }
-      :root { --header-gap: 210px; }
-      .gallery { grid-template-columns: 1fr; }
-      .gallery-item { max-width: 560px; }
-    }
-
-    /* ===== Frame / Mat / Art ===== */
-    .frame {
-      position: relative;
-      border-style: solid;
-      border-width: var(--frame-width);
-      border-image-source: var(--frame-src);
-      border-image-slice: var(--frame-slice);
-      border-image-repeat: round;
-      border-image-width: 1;
-      background: transparent;   /* bg shows under inner bevel */
-      display: grid; place-items: center;
-    }
-    /* Anti-halo ring (0 by default; can be set per-item) */
-    .frame::after {
-      content: "";
-      position: absolute;
-      inset: var(--frame-width);
-      border: var(--frame-mask) solid var(--bg-color);
-      pointer-events: none;
-    }
-
-    .mat {
-      width: 100%; height: 100%;
-      background: var(--mat-color);
-      padding: var(--mat-padding);
-      box-sizing: border-box;
-      display: grid; place-items: center;
-      box-shadow:
-        inset 0 0 0 2px var(--inner-stroke),
-        inset 0 0 0 4px rgba(255,255,255,0.18);
-    }
-    .art { width: 100%; height: 100%; overflow: hidden; }
-    .art img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center center;
-      display: block; background: transparent;
-      transition: transform 200ms ease, filter 200ms ease;
-      cursor: zoom-in;
-    }
-    .gallery-item:hover .art img { transform: scale(1.02); filter: brightness(0.96); }
-
-    .caption {
-      position: absolute; left: 0; right: 0; bottom: 0;
-      padding: 6px 8px; font-size: 0.85rem; color: #fff;
-      background: linear-gradient(transparent, rgba(0,0,0,0.55));
-      opacity: 0; transition: opacity 200ms ease; pointer-events: none;
-    }
-    .gallery-item:hover .caption { opacity: 1; }
-
-    /* ===== Frame Lab (controls) ===== */
-    .controls {
-      position: fixed; bottom: 20px; left: 20px;
-      background: #fff; color: #111; z-index: 9999;
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      border-radius: 14px; overflow: hidden; width: 320px;
-      font: 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-    .controls__header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 12px; background: #fafafa; border-bottom: 1px solid rgba(0,0,0,0.06);
-      font-weight: 600;
-    }
-    .controls__body { padding: 10px 12px; display: grid; gap: 10px; }
-    .row { display: grid; gap: 6px; }
-    .row.inline { grid-template-columns: 1fr auto; align-items: center; }
-    label { font-size: 12px; color: #444; }
-    select, input[type="range"], input[type="file"] {
-      width: 100%;
-    }
-    .range-wrap { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-    .val { font-variant-numeric: tabular-nums; min-width: 3ch; text-align: right; color: #333; }
-    .controls button {
-      appearance: none; border: 1px solid rgba(0,0,0,0.12); background: #fff;
-      padding: 8px 10px; border-radius: 10px; cursor: pointer;
-    }
-    .controls button:hover { background: #f7f7f7; }
-    .muted { color: #666; font-size: 12px; }
-    .hidden { display: none !important; }
+    /* controls */
+    .controls{position:fixed;bottom:20px;left:20px;background:#fff;color:#111;z-index:9999;border:1px solid rgba(0,0,0,.08);box-shadow:0 8px 24px rgba(0,0,0,.12);border-radius:14px;overflow:hidden;width:320px;font:14px/1.3 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    .controls__header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#fafafa;border-bottom:1px solid rgba(0,0,0,.06);font-weight:600}
+    .controls__body{padding:10px 12px;display:grid;gap:10px}
+    .row{display:grid;gap:6px}
+    .row.inline{grid-template-columns:1fr auto;align-items:center}
+    label{font-size:12px;color:#444}
+    select,input[type=range],input[type=file]{width:100%}
+    .range-wrap{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+    .val{font-variant-numeric:tabular-nums;min-width:3ch;text-align:right;color:#333}
+    .controls button{appearance:none;border:1px solid rgba(0,0,0,.12);background:#fff;padding:8px 10px;border-radius:10px;cursor:pointer}
+    .controls button:hover{background:#f7f7f7}
+    .muted{color:#666;font-size:12px}
+    .hidden{display:none!important}
   </style>
 </head>
 <body>
-
-  <!-- Contact Me tag -->
   <a href="mailto:youremail@example.com" class="contact-tag">Contact Me</a>
-
-  <!-- Animated title + subtitle -->
   <div class="moving-text" id="movingText">chloe doodles</div>
   <div class="subtitle" id="subtitle">graphic design</div>
 
-  <!-- Main content area -->
   <main class="content">
     <div class="gallery-title">gallery</div>
     <div id="gallery" class="gallery"></div>
   </main>
 
-  <!-- ===== Frame Lab controls ===== -->
+  <!-- Frame Lab -->
   <aside class="controls" id="controls">
     <div class="controls__header">
       <span>🖼️ Frame Lab</span>
@@ -228,25 +99,28 @@
     <div class="controls__body" id="controlsBody">
       <div class="row">
         <label for="targetSelect">Target</label>
-        <select id="targetSelect">
-          <!-- populated by JS: All items, Image 1, Image 2, ... -->
-        </select>
+        <select id="targetSelect"></select>
         <label class="muted"><input type="checkbox" id="applyAll"> Apply to all</label>
       </div>
 
       <div class="row">
         <label for="presetSelect">Frame preset</label>
         <select id="presetSelect">
-          <option value="gold4" data-src="ornate-gold-frame-eroded4.png" data-slice="270" data-width="60" data-mask="0">Gold Ornate (eroded 4)</option>
-          <option value="gold3" data-src="ornate-gold-frame-eroded3.png" data-slice="260" data-width="58" data-mask="0">Gold Ornate (eroded 3)</option>
+          <!-- Rectangular presets -->
+          <option value="gold4" data-shape="rect" data-src="ornate-gold-frame-eroded4.png" data-slice="270" data-width="60" data-mask="0">Gold Ornate (rect)</option>
+          <option value="silver" data-shape="rect" data-src="frame-silver-transparent-trimmed.png" data-slice="301" data-width="60" data-mask="0">Silver Ornate (rect)</option>
+          <option value="blackRect" data-shape="rect" data-src="frame-black-ornate-transparent-trimmed.png" data-slice="118" data-width="58" data-mask="0">Black Ornate (rect)</option>
+          <!-- Oval presets -->
+          <option value="goldOval" data-shape="oval" data-src="frame-oval-gold-transparent-trimmed.png">Gold Ornate (oval)</option>
+          <option value="blackOval" data-shape="oval" data-src="frame-oval-black-transparent-trimmed.png">Black Ornate (oval)</option>
           <option value="custom">Custom upload…</option>
         </select>
         <input id="customFile" class="hidden" type="file" accept="image/png,image/webp,image/avif" />
-        <span class="muted">Use PNG with a transparent center for best results.</span>
+        <label class="muted"><input type="checkbox" id="ovalMode"> Oval mode</label>
       </div>
 
       <div class="row">
-        <label>Frame width</label>
+        <label>Frame width (rect)</label>
         <div class="range-wrap">
           <input id="frameWidth" type="range" min="30" max="90" step="1" value="60" />
           <span class="val" id="frameWidthVal">60px</span>
@@ -254,9 +128,9 @@
       </div>
 
       <div class="row">
-        <label>Frame slice</label>
+        <label>Frame slice (rect)</label>
         <div class="range-wrap">
-          <input id="frameSlice" type="range" min="150" max="320" step="1" value="270" />
+          <input id="frameSlice" type="range" min="150" max="340" step="1" value="270" />
           <span class="val" id="frameSliceVal">270</span>
         </div>
       </div>
@@ -270,202 +144,198 @@
       </div>
 
       <div class="row">
-        <label>Anti-halo mask</label>
+        <label>Anti-halo mask (rect)</label>
         <div class="range-wrap">
           <input id="mask" type="range" min="0" max="3" step="1" value="0" />
           <span class="val" id="maskVal">0px</span>
         </div>
       </div>
 
+      <div class="row">
+        <label>Oval clip (advanced)</label>
+        <div class="range-wrap">
+          <input id="ovalX" type="range" min="40" max="50" step="1" value="48" />
+          <span class="val" id="ovalXVal">48%</span>
+        </div>
+        <div class="range-wrap">
+          <input id="ovalY" type="range" min="40" max="50" step="1" value="44" />
+          <span class="val" id="ovalYVal">44%</span>
+        </div>
+      </div>
+
       <div class="row inline">
-        <button id="resetBtn" title="Reset target to defaults">Reset</button>
+        <button id="resetBtn">Reset</button>
         <span class="muted" id="status"></span>
       </div>
     </div>
   </aside>
 
   <script>
-    // Header effects
-    setTimeout(() => document.getElementById('movingText').classList.add('glow'), 3000);
-    setTimeout(() => document.getElementById('subtitle').classList.add('show'), 5000);
+    setTimeout(()=>document.getElementById('movingText').classList.add('glow'),3000);
+    setTimeout(()=>document.getElementById('subtitle').classList.add('show'),5000);
 
-    // ===== Build gallery =====
     const images = [
-      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' },
-      { src: 'IMG_0003.jpg', alt: 'misadventures jeans', caption: 'misadventures jeans' },
-      { src: 'IMG_0006.jpg', alt: 'misadventures bandana', caption: 'misadventures bandana' },
-      { src: 'IMG_0522.jpg', alt: '3 cheers for sweet revenge tote', caption: '3 cheers for sweet revenge tote' },
-      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' }
+      { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch', caption:'collide with the sky pencil pouch' },
+      { src:'IMG_0003.jpg', alt:'misadventures jeans', caption:'misadventures jeans' },
+      { src:'IMG_0006.jpg', alt:'misadventures bandana', caption:'misadventures bandana' },
+      { src:'IMG_0522.jpg', alt:'3 cheers for sweet revenge tote', caption:'3 cheers for sweet revenge tote' },
+      { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch', caption:'collide with the sky pencil pouch' }
     ];
 
-    const frameEls = [];
-    const matEls = [];
-    function addGallery(items) {
-      const container = document.getElementById('gallery');
-      container.innerHTML = '';
+    const frameEls=[], matEls=[], overlayEls=[];
+    function addGallery(items){
+      const container=document.getElementById('gallery');
+      container.innerHTML='';
+      items.forEach((img,idx)=>{
+        const data=typeof img==='string'?{src:img}:img;
+        const fig=document.createElement('figure'); fig.className='gallery-item';
 
-      items.forEach((img, idx) => {
-        const data = typeof img === 'string' ? { src: img } : img;
-
-        const fig = document.createElement('figure');
-        fig.className = 'gallery-item';
-
-        const frame = document.createElement('div');
-        frame.className = 'frame';
+        const frame=document.createElement('div'); frame.className='frame';
+        // default mask from :root
         frame.style.setProperty('--frame-mask', getComputedStyle(document.documentElement).getPropertyValue('--frame-mask'));
 
-        const mat = document.createElement('div');
-        mat.className = 'mat';
+        const mat=document.createElement('div'); mat.className='mat';
+        const art=document.createElement('div'); art.className='art';
+        const image=document.createElement('img'); image.loading='lazy'; image.decoding='async'; image.src=data.src; image.alt=data.alt||`gallery image ${idx+1}`;
+        art.appendChild(image); mat.appendChild(art);
 
-        const art = document.createElement('div');
-        art.className = 'art';
+        // overlay for oval mode
+        const overlay=document.createElement('img'); overlay.className='overlay'; overlay.alt=''; overlay.decoding='async'; overlay.loading='lazy';
 
-        const image = document.createElement('img');
-        image.loading = 'lazy';
-        image.decoding = 'async';
-        image.src = data.src;
-        image.alt = data.alt || `gallery image ${idx + 1}`;
+        frame.appendChild(mat); frame.appendChild(overlay); fig.appendChild(frame);
 
-        art.appendChild(image);
-        mat.appendChild(art);
-        frame.appendChild(mat);
-        fig.appendChild(frame);
-
-        if (data.caption) {
-          const cap = document.createElement('figcaption');
-          cap.className = 'caption';
-          cap.textContent = data.caption;
-          fig.appendChild(cap);
-        }
-
+        if(data.caption){ const cap=document.createElement('figcaption'); cap.className='caption'; cap.textContent=data.caption; fig.appendChild(cap); }
         container.appendChild(fig);
-        frameEls[idx] = frame;
-        matEls[idx] = mat;
+
+        frameEls[idx]=frame; matEls[idx]=mat; overlayEls[idx]=overlay;
       });
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      addGallery(images);
-      initControls(images.length);
-    });
+    window.addEventListener('DOMContentLoaded',()=>{ addGallery(images); initControls(images.length); });
 
-    // ===== Controls =====
-    function initControls(count) {
-      const targetSelect = document.getElementById('targetSelect');
-      const applyAll = document.getElementById('applyAll');
-      const presetSelect = document.getElementById('presetSelect');
-      const customFile = document.getElementById('customFile');
+    /* ---------- Frame Lab ---------- */
+    function initControls(count){
+      const targetSelect=document.getElementById('targetSelect');
+      const applyAll=document.getElementById('applyAll');
+      const presetSelect=document.getElementById('presetSelect');
+      const customFile=document.getElementById('customFile');
+      const ovalMode=document.getElementById('ovalMode');
 
-      const frameWidth = document.getElementById('frameWidth');
-      const frameSlice = document.getElementById('frameSlice');
-      const matPadding = document.getElementById('matPadding');
-      const mask = document.getElementById('mask');
+      const frameWidth=document.getElementById('frameWidth');
+      const frameSlice=document.getElementById('frameSlice');
+      const matPadding=document.getElementById('matPadding');
+      const mask=document.getElementById('mask');
+      const ovalX=document.getElementById('ovalX');
+      const ovalY=document.getElementById('ovalY');
 
-      const frameWidthVal = document.getElementById('frameWidthVal');
-      const frameSliceVal = document.getElementById('frameSliceVal');
-      const matPaddingVal = document.getElementById('matPaddingVal');
-      const maskVal = document.getElementById('maskVal');
+      const frameWidthVal=document.getElementById('frameWidthVal');
+      const frameSliceVal=document.getElementById('frameSliceVal');
+      const matPaddingVal=document.getElementById('matPaddingVal');
+      const maskVal=document.getElementById('maskVal');
+      const ovalXVal=document.getElementById('ovalXVal');
+      const ovalYVal=document.getElementById('ovalYVal');
 
-      const resetBtn = document.getElementById('resetBtn');
-      const status = document.getElementById('status');
-      const togglePanel = document.getElementById('togglePanel');
-      const controlsBody = document.getElementById('controlsBody');
+      const resetBtn=document.getElementById('resetBtn');
+      const status=document.getElementById('status');
+      const togglePanel=document.getElementById('togglePanel');
+      const controlsBody=document.getElementById('controlsBody');
 
-      // Populate target options
-      targetSelect.innerHTML = '';
-      const optAll = document.createElement('option');
-      optAll.value = 'all'; optAll.textContent = 'All items';
-      targetSelect.appendChild(optAll);
-      for (let i = 0; i < count; i++) {
-        const o = document.createElement('option');
-        o.value = String(i);
-        o.textContent = `Image ${i + 1}`;
-        targetSelect.appendChild(o);
+      // targets
+      targetSelect.innerHTML='';
+      const optAll=document.createElement('option'); optAll.value='all'; optAll.textContent='All items'; targetSelect.appendChild(optAll);
+      for(let i=0;i<count;i++){ const o=document.createElement('option'); o.value=String(i); o.textContent=`Image ${i+1}`; targetSelect.appendChild(o); }
+
+      const getTargets=()=> (applyAll.checked||targetSelect.value==='all') ? frameEls.map((_,i)=>i) : [parseInt(targetSelect.value,10)];
+
+      function syncVals(){
+        frameWidthVal.textContent=`${frameWidth.value}px`;
+        frameSliceVal.textContent=`${frameSlice.value}`;
+        matPaddingVal.textContent=`${matPadding.value}px`;
+        maskVal.textContent=`${mask.value}px`;
+        ovalXVal.textContent=`${ovalX.value}%`;
+        ovalYVal.textContent=`${ovalY.value}%`;
       }
-
-      // Helpers
-      const getTargets = () => {
-        if (applyAll.checked || targetSelect.value === 'all') {
-          return frameEls.map((_, i) => i);
-        }
-        return [parseInt(targetSelect.value, 10)];
-      };
-
-      const applyStyles = ({ src, slice, width, padding, maskPx }) => {
-        const targets = getTargets();
-        targets.forEach(i => {
-          const f = frameEls[i];
-          const m = matEls[i];
-          if (src) f.style.borderImageSource = `url('${src}')`;
-          if (typeof slice === 'number') f.style.borderImageSlice = String(slice);
-          if (typeof width === 'number') f.style.borderWidth = `${width}px`;
-          if (typeof maskPx === 'number') f.style.setProperty('--frame-mask', `${maskPx}px`);
-          if (typeof padding === 'number') m.style.setProperty('--mat-padding', `${padding}px`);
-        });
-        status.textContent = targets.length > 1 ? `Applied to ${targets.length} items` : `Applied to ${targets[0] + 1}`;
-        setTimeout(() => status.textContent = '', 900);
-      };
-
-      const syncVals = () => {
-        frameWidthVal.textContent = `${frameWidth.value}px`;
-        frameSliceVal.textContent = `${frameSlice.value}`;
-        matPaddingVal.textContent = `${matPadding.value}px`;
-        maskVal.textContent = `${mask.value}px`;
-      };
       syncVals();
 
-      // Preset change
-      presetSelect.addEventListener('change', () => {
-        const v = presetSelect.value;
-        if (v === 'custom') {
-          customFile.classList.remove('hidden');
-          customFile.value = '';
-        } else {
-          customFile.classList.add('hidden');
-          const opt = presetSelect.selectedOptions[0];
-          const src = opt.dataset.src;
-          const slice = parseInt(opt.dataset.slice, 10);
-          const width = parseInt(opt.dataset.width, 10);
-          const maskPx = parseInt(opt.dataset.mask, 10);
+      function applyStyles({shape,src,slice,width,padding,maskPx,ovalXR,ovalYR}){
+        const targets=getTargets();
+        targets.forEach(i=>{
+          const f=frameEls[i], m=matEls[i], ov=overlayEls[i];
+          if(shape==='oval'){ f.classList.add('is-oval'); ov.style.display='block'; if(src) ov.src=src; }
+          if(shape==='rect'){ f.classList.remove('is-oval'); ov.style.display='none'; if(src) f.style.borderImageSource=`url('${src}')`; }
 
-          frameWidth.value = width; frameSlice.value = slice; mask.value = maskPx;
-          syncVals();
-          applyStyles({ src, slice, width, maskPx });
+          if(typeof slice==='number') f.style.borderImageSlice=String(slice);
+          if(typeof width==='number') f.style.borderWidth=`${width}px`;
+          if(typeof maskPx==='number') f.style.setProperty('--frame-mask', `${maskPx}px`);
+          if(typeof padding==='number') m.style.setProperty('--mat-padding', `${padding}px`);
+          if(typeof ovalXR==='number') f.style.setProperty('--oval-x', `${ovalXR}%`);
+          if(typeof ovalYR==='number') f.style.setProperty('--oval-y', `${ovalYR}%`);
+        });
+        status.textContent = targets.length>1 ? `Applied to ${targets.length} items` : `Applied to ${targets[0]+1}`;
+        setTimeout(()=>status.textContent='',900);
+      }
+
+      // Preset change
+      presetSelect.addEventListener('change',()=>{
+        const v=presetSelect.value;
+        if(v==='custom'){ customFile.classList.remove('hidden'); return; }
+        customFile.classList.add('hidden');
+
+        const opt=presetSelect.selectedOptions[0];
+        const shape=opt.dataset.shape||'rect';
+        const src=opt.dataset.src;
+        if(shape==='oval'){
+          ovalMode.checked=true;
+          applyStyles({shape:'oval',src});
+        }else{
+          ovalMode.checked=false;
+          const slice=parseInt(opt.dataset.slice||'270',10);
+          const width=parseInt(opt.dataset.width||'60',10);
+          const maskPx=parseInt(opt.dataset.mask||'0',10);
+          frameSlice.value=slice; frameWidth.value=width; mask.value=maskPx; syncVals();
+          applyStyles({shape:'rect',src,slice,width,maskPx});
         }
       });
 
       // Custom upload
-      customFile.addEventListener('change', () => {
-        const file = customFile.files?.[0];
-        if (!file) return;
-        const url = URL.createObjectURL(file);
-        applyStyles({ src: url });
+      customFile.addEventListener('change',()=>{
+        const file=customFile.files?.[0]; if(!file) return;
+        const url=URL.createObjectURL(file);
+        applyStyles({shape: (ovalMode.checked?'oval':'rect'), src:url});
+      });
+
+      // Oval toggle
+      ovalMode.addEventListener('change',()=>{
+        const opt=presetSelect.selectedOptions[0];
+        const currentSrc = (opt && opt.dataset.src) || null;
+        applyStyles({shape: ovalMode.checked?'oval':'rect', src: currentSrc});
       });
 
       // Sliders
-      frameWidth.addEventListener('input', () => { syncVals(); applyStyles({ width: parseInt(frameWidth.value, 10) }); });
-      frameSlice.addEventListener('input', () => { syncVals(); applyStyles({ slice: parseInt(frameSlice.value, 10) }); });
-      matPadding.addEventListener('input', () => { syncVals(); applyStyles({ padding: parseInt(matPadding.value, 10) }); });
-      mask.addEventListener('input', () => { syncVals(); applyStyles({ maskPx: parseInt(mask.value, 10) }); });
+      frameWidth.addEventListener('input',()=>{ syncVals(); applyStyles({width:parseInt(frameWidth.value,10)}); });
+      frameSlice.addEventListener('input',()=>{ syncVals(); applyStyles({slice:parseInt(frameSlice.value,10)}); });
+      matPadding.addEventListener('input',()=>{ syncVals(); applyStyles({padding:parseInt(matPadding.value,10)}); });
+      mask.addEventListener('input',()=>{ syncVals(); applyStyles({maskPx:parseInt(mask.value,10)}); });
+      ovalX.addEventListener('input',()=>{ syncVals(); applyStyles({ovalXR:parseInt(ovalX.value,10)}); });
+      ovalY.addEventListener('input',()=>{ syncVals(); applyStyles({ovalYR:parseInt(ovalY.value,10)}); });
 
       // Reset
-      resetBtn.addEventListener('click', () => {
-        frameWidth.value = 60; frameSlice.value = 270; matPadding.value = 20; mask.value = 0;
-        presetSelect.value = 'gold4'; customFile.classList.add('hidden');
+      resetBtn.addEventListener('click',()=>{
+        frameWidth.value=60; frameSlice.value=270; matPadding.value=20; mask.value=0; ovalX.value=48; ovalY.value=44; ovalMode.checked=false;
+        presetSelect.value='gold4'; customFile.classList.add('hidden');
         syncVals();
-        const src = presetSelect.selectedOptions[0].dataset.src;
-        applyStyles({ src, slice: 270, width: 60, padding: 20, maskPx: 0 });
+        applyStyles({shape:'rect',src:'ornate-gold-frame-eroded4.png',slice:270,width:60,padding:20,maskPx:0,ovalXR:48,ovalYR:44});
       });
 
       // Collapse panel
-      let collapsed = false;
-      togglePanel.addEventListener('click', () => {
-        collapsed = !collapsed;
-        controlsBody.style.display = collapsed ? 'none' : 'grid';
-        togglePanel.textContent = collapsed ? '+' : '−';
-      });
+      let collapsed=false;
+      togglePanel.addEventListener('click',()=>{collapsed=!collapsed; controlsBody.style.display=collapsed?'none':'grid'; togglePanel.textContent=collapsed?'+':'−';});
+
+      // init selects
+      presetSelect.dispatchEvent(new Event('change'));
+      // targets dropdown default
+      document.getElementById('targetSelect').value='all';
     }
   </script>
-
 </body>
 </html>
