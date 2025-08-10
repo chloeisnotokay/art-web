@@ -19,14 +19,14 @@
       --mat-color: #efe9dc;  /* tan museum mat */
       --inner-stroke: #cbb79a;
 
-      /* frame */
+      /* default frame (used unless overridden per item) */
       --frame-src: url('ornate-gold-frame-eroded4.png'); /* cleaned PNG */
       --frame-slice: 270;
       --frame-width: 60px;
-      --frame-mask: 0px;     /* anti-halo ring (0 = off; set to 1–2px if needed) */
+      --frame-mask: 0px;     /* 0 = off; set to 1–2px if a halo sneaks in */
 
-      /* spacing between frame & art */
-      --mat-padding: 14px;   /* thickness of mat around the photo */
+      /* default mat thickness (padding inside the mat) */
+      --mat-padding: 20px;   /* made bigger per your request */
     }
 
     body {
@@ -123,7 +123,7 @@
       .gallery-item { max-width: 560px; }
     }
 
-    /* ===== Frame ===== */
+    /* ===== Frame / Mat / Art ===== */
     .frame {
       position: relative;
       border-style: solid;
@@ -135,7 +135,7 @@
       background: transparent;   /* bg shows under inner bevel */
       display: grid; place-items: center;
     }
-    /* Anti-halo ring (off by default; set --frame-mask to 1–2px if needed) */
+    /* Anti-halo ring (0 by default; can be set per-item) */
     .frame::after {
       content: "";
       position: absolute;
@@ -144,7 +144,6 @@
       pointer-events: none;
     }
 
-    /* ===== Mat (padding keeps image centered, no white box) ===== */
     .mat {
       width: 100%; height: 100%;
       background: var(--mat-color);
@@ -153,7 +152,7 @@
       display: grid; place-items: center;
       box-shadow:
         inset 0 0 0 2px var(--inner-stroke),
-        inset 0 0 0 4px rgba(255,255,255,0.18); /* softer bevel */
+        inset 0 0 0 4px rgba(255,255,255,0.18);
     }
     .art { width: 100%; height: 100%; overflow: hidden; }
     .art img {
@@ -172,6 +171,37 @@
       opacity: 0; transition: opacity 200ms ease; pointer-events: none;
     }
     .gallery-item:hover .caption { opacity: 1; }
+
+    /* ===== Frame Lab (controls) ===== */
+    .controls {
+      position: fixed; bottom: 20px; left: 20px;
+      background: #fff; color: #111; z-index: 9999;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      border-radius: 14px; overflow: hidden; width: 320px;
+      font: 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .controls__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; background: #fafafa; border-bottom: 1px solid rgba(0,0,0,0.06);
+      font-weight: 600;
+    }
+    .controls__body { padding: 10px 12px; display: grid; gap: 10px; }
+    .row { display: grid; gap: 6px; }
+    .row.inline { grid-template-columns: 1fr auto; align-items: center; }
+    label { font-size: 12px; color: #444; }
+    select, input[type="range"], input[type="file"] {
+      width: 100%;
+    }
+    .range-wrap { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+    .val { font-variant-numeric: tabular-nums; min-width: 3ch; text-align: right; color: #333; }
+    .controls button {
+      appearance: none; border: 1px solid rgba(0,0,0,0.12); background: #fff;
+      padding: 8px 10px; border-radius: 10px; cursor: pointer;
+    }
+    .controls button:hover { background: #f7f7f7; }
+    .muted { color: #666; font-size: 12px; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -180,71 +210,4 @@
   <a href="mailto:youremail@example.com" class="contact-tag">Contact Me</a>
 
   <!-- Animated title + subtitle -->
-  <div class="moving-text" id="movingText">chloe doodles</div>
-  <div class="subtitle" id="subtitle">graphic design</div>
-
-  <!-- Main content area -->
-  <main class="content">
-    <div class="gallery-title">gallery</div>
-    <div id="gallery" class="gallery"></div>
-  </main>
-
-  <script>
-    // Header effects
-    setTimeout(() => document.getElementById('movingText').classList.add('glow'), 3000);
-    setTimeout(() => document.getElementById('subtitle').classList.add('show'), 5000);
-
-    function addGallery(images) {
-      const container = document.getElementById('gallery');
-      container.innerHTML = '';
-
-      images.forEach((img, idx) => {
-        const data = typeof img === 'string' ? { src: img } : img;
-
-        const fig = document.createElement('figure');
-        fig.className = 'gallery-item';
-
-        const frame = document.createElement('div');
-        frame.className = 'frame';
-
-        const mat = document.createElement('div');
-        mat.className = 'mat';
-
-        const art = document.createElement('div');
-        art.className = 'art';
-
-        const image = document.createElement('img');
-        image.loading = 'lazy';
-        image.decoding = 'async';
-        image.src = data.src;
-        image.alt = data.alt || `gallery image ${idx + 1}`;
-
-        art.appendChild(image);
-        mat.appendChild(art);
-        frame.appendChild(mat);
-        fig.appendChild(frame);
-
-        if (data.caption) {
-          const cap = document.createElement('figcaption');
-          cap.className = 'caption';
-          cap.textContent = data.caption;
-          fig.appendChild(cap);
-        }
-
-        container.appendChild(fig);
-      });
-    }
-
-    const images = [
-      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' },
-      { src: 'IMG_0003.jpg', alt: 'misadventures jeans', caption: 'misadventures jeans' },
-      { src: 'IMG_0006.jpg', alt: 'misadventures bandana', caption: 'misadventures bandana' },
-      { src: 'IMG_0522.jpg', alt: '3 cheers for sweet revenge tote', caption: '3 cheers for sweet revenge tote' },
-      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' }
-    ];
-
-    window.addEventListener('DOMContentLoaded', () => addGallery(images));
-  </script>
-
-</body>
-</html>
+  <
