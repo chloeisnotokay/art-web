@@ -14,16 +14,18 @@
       --page-padding: 16px;
 
       /* Frame tuning */
-      --frame-src: url('ornate-gold-frame-trimmed.png'); /* put your ornate PNG here (transparent center) */
-      --frame-slice: 200;   /* how far to slice from each edge of the PNG (pixels) */
-      --frame-width: 40px;  /* visual thickness of the frame on the page */
-      --mat-color: #efe9dc; /* “museum mat” color */
-      --inner-stroke: #cbb79a; /* thin inner liner color */
+      --frame-src: url('ornate-gold-frame-trimmed.png'); /* trimmed PNG file */
+      --frame-slice: 270;   /* adjust to match PNG corners */
+      --frame-width: 60px;  /* thickness of the visible frame */
+      --bg-color: #fdfdfd;  /* page background */
+      --mat-color: #efe9dc; /* museum mat */
+      --inner-stroke: #cbb79a; /* thin inner liner */
+      --mat-gap: 14px; /* gap between frame’s inner edge and the mat */
     }
 
     body {
       margin: 0;
-      background-color: #fdfdfd;
+      background-color: var(--bg-color);
       min-height: 100vh;
       overflow: auto;
       padding: var(--page-padding);
@@ -120,20 +122,22 @@
       max-width: 380px;
       aspect-ratio: 4 / 5;
       position: relative;
-      /* no rounding so frame corners look crisp */
     }
 
-    /* 1) REAL vintage frame using border-image (requires PNG asset with transparent center) */
+    /* Vintage PNG frame */
     .frame {
       width: 100%;
       height: 100%;
       box-sizing: border-box;
       border-style: solid;
       border-width: var(--frame-width);
-      /* 9-slice the source frame: adjust slice to match your PNG’s border thickness */
-      -webkit-border-image: var(--frame-src) var(--frame-slice) round;
-      border-image: var(--frame-src) var(--frame-slice) round;
-      background: var(--mat-color); /* mat background behind the art */
+
+      border-image-source: var(--frame-src);
+      border-image-slice: var(--frame-slice);
+      border-image-repeat: round;
+      border-image-width: 1;
+
+      background: transparent; /* let bg show through */
       display: grid;
       place-items: center;
       box-shadow:
@@ -142,15 +146,17 @@
       position: relative;
     }
 
-    /* “Mat” padding inside the frame; tweak for wider/narrower mat */
+    /* Mat smaller than frame’s inner edge */
     .mat {
-      width: calc(100% - 26px);
-      height: calc(100% - 26px);
+      width: calc(100% - (var(--mat-gap) * 2));
+      height: calc(100% - (var(--mat-gap) * 2));
       background: var(--mat-color);
       position: relative;
-      box-shadow: inset 0 0 0 2px var(--inner-stroke), inset 0 0 0 8px rgba(255,255,255,0.35);
       display: grid;
       place-items: center;
+      box-shadow:
+        inset 0 0 0 2px var(--inner-stroke),
+        inset 0 0 0 6px rgba(255,255,255,0.35);
     }
 
     .art {
@@ -158,50 +164,14 @@
       height: 100%;
       overflow: hidden;
     }
-
     .art img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
       transition: transform 200ms ease, filter 200ms ease;
-      cursor: zoom-in; /* click opens lightbox */
+      cursor: zoom-in;
     }
-
     .gallery-item:hover .art img { transform: scale(1.02); filter: brightness(0.96); }
-
-    /* 2) Fallback CSS-only frame if no PNG is present
-       (apply .css-frame instead of .frame on the wrapper to use this) */
-    .css-frame {
-      width: 100%;
-      height: 100%;
-      background: var(--mat-color);
-      position: relative;
-      display: grid;
-      place-items: center;
-      box-shadow:
-        0 3px 6px rgba(0,0,0,0.18),
-        0 12px 28px rgba(0,0,0,0.22);
-    }
-    .css-frame::before {
-      /* outer “wood” band */
-      content: "";
-      position: absolute;
-      inset: -14px;
-      background: linear-gradient(135deg, #9b7c4a, #6e532c);
-      box-shadow: inset 0 0 0 6px rgba(255,255,255,0.08), inset 0 0 0 12px rgba(0,0,0,0.2);
-      z-index: 0;
-    }
-    .css-frame::after {
-      /* inner thin liner */
-      content: "";
-      position: absolute;
-      inset: 8px;
-      box-shadow: inset 0 0 0 2px var(--inner-stroke);
-      border: 6px solid rgba(255,255,255,0.4);
-      z-index: 1;
-      pointer-events: none;
-    }
 
     .caption {
       position: absolute;
@@ -225,75 +195,6 @@
       :root { --header-gap: 210px; }
       .gallery { grid-template-columns: 1fr; gap: 26px; }
     }
-
-    /* ===== Lightbox ===== */
-    .lightbox {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.92);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 24px;
-    }
-    .lightbox.open { display: flex; }
-    .lightbox-image {
-      max-width: min(94vw, 1400px);
-      max-height: 88vh;
-      object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-      user-select: none;
-      -webkit-user-drag: none;
-      cursor: grab;
-    }
-    .lb-caption {
-      position: absolute;
-      left: 24px; right: 24px; bottom: 20px;
-      color: #eee;
-      text-align: center;
-      font-size: 0.95rem;
-      line-height: 1.3;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-      pointer-events: none;
-    }
-    .lb-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      width: 48px;
-      height: 48px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      font-size: 22px;
-      cursor: pointer;
-      user-select: none;
-      transition: background 150ms ease, transform 150ms ease;
-    }
-    .lb-btn:hover { background: rgba(255,255,255,0.18); transform: translateY(-50%) scale(1.04); }
-    .lb-prev { left: 18px; }
-    .lb-next { right: 18px; }
-    .lb-close {
-      position: absolute;
-      top: 16px; right: 16px;
-      width: 40px; height: 40px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      font-size: 22px;
-      display: grid; place-items: center;
-      cursor: pointer;
-      user-select: none;
-      transition: background 150ms ease, transform 150ms ease;
-    }
-    .lb-close:hover { background: rgba(255,255,255,0.18); transform: scale(1.04); }
   </style>
 </head>
 <body>
@@ -311,21 +212,10 @@
     <div id="gallery" class="gallery"></div>
   </main>
 
-  <!-- Lightbox modal -->
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
-    <button class="lb-close" id="lbClose" aria-label="Close (Esc)">✕</button>
-    <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous (←)">‹</button>
-    <img id="lbImage" class="lightbox-image" alt="">
-    <button class="lb-btn lb-next" id="lbNext" aria-label="Next (→)">›</button>
-    <div id="lbCaption" class="lb-caption"></div>
-  </div>
-
   <script>
-    // Header effects
     setTimeout(() => document.getElementById('movingText').classList.add('glow'), 3000);
     setTimeout(() => document.getElementById('subtitle').classList.add('show'), 5000);
 
-    // Build gallery with frame + mat
     function addGallery(images) {
       const container = document.getElementById('gallery');
       container.innerHTML = '';
@@ -336,9 +226,8 @@
         const fig = document.createElement('figure');
         fig.className = 'gallery-item';
 
-        // Choose frame type: use .frame (border-image PNG) by default
         const frame = document.createElement('div');
-        frame.className = 'frame'; // swap to 'css-frame' if you want the pure-CSS version
+        frame.className = 'frame';
 
         const mat = document.createElement('div');
         mat.className = 'mat';
@@ -351,12 +240,6 @@
         image.decoding = 'async';
         image.src = data.src;
         image.alt = data.alt || `gallery image ${idx + 1}`;
-
-        // Click anywhere on framed art opens lightbox
-        [image, art, mat].forEach(el => {
-          el.addEventListener('click', () => openLightbox(idx));
-          el.style.cursor = 'zoom-in';
-        });
 
         art.appendChild(image);
         mat.appendChild(art);
@@ -374,7 +257,6 @@
       });
     }
 
-    // Your images
     const images = [
       { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' },
       { src: 'IMG_0003.jpg', alt: 'misadventures jeans', caption: 'misadventures jeans' },
@@ -383,90 +265,6 @@
       { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' }
     ];
 
-    // ===== Lightbox logic =====
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lbImage');
-    const lbCap = document.getElementById('lbCaption');
-    const lbPrev = document.getElementById('lbPrev');
-    const lbNext = document.getElementById('lbNext');
-    const lbClose = document.getElementById('lbClose');
-
-    let currentIndex = 0;
-    let touchStartX = null;
-    let touchStartY = null;
-
-    function openLightbox(index) {
-      currentIndex = index;
-      renderLightbox();
-      lb.classList.add('open');
-      lb.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      lbImg.focus?.();
-    }
-
-    function closeLightbox() {
-      lb.classList.remove('open');
-      lb.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    function renderLightbox() {
-      const item = typeof images[currentIndex] === 'string'
-        ? { src: images[currentIndex] }
-        : images[currentIndex];
-
-      lbImg.src = item.src;
-      lbImg.alt = item.alt || `image ${currentIndex + 1}`;
-      lbCap.textContent = item.caption || '';
-
-      // Preload neighbors
-      const next = images[(currentIndex + 1) % images.length];
-      const prev = images[(currentIndex - 1 + images.length) % images.length];
-      [next, prev].forEach(i => {
-        const s = typeof i === 'string' ? i : i.src;
-        const preload = new Image();
-        preload.src = s;
-      });
-    }
-
-    function nextImage() { currentIndex = (currentIndex + 1) % images.length; renderLightbox(); }
-    function prevImage() { currentIndex = (currentIndex - 1 + images.length) % images.length; renderLightbox(); }
-
-    // Buttons
-    lbNext.addEventListener('click', nextImage);
-    lbPrev.addEventListener('click', prevImage);
-    lbClose.addEventListener('click', closeLightbox);
-
-    // Click outside image closes
-    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
-
-    // Keyboard
-    document.addEventListener('keydown', (e) => {
-      if (!lb.classList.contains('open')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'ArrowLeft') prevImage();
-    });
-
-    // Swipe
-    lb.addEventListener('touchstart', (e) => {
-      const t = e.changedTouches[0];
-      touchStartX = t.clientX;
-      touchStartY = t.clientY;
-    }, { passive: true });
-
-    lb.addEventListener('touchend', (e) => {
-      if (touchStartX === null) return;
-      const t = e.changedTouches[0];
-      const dx = t.clientX - touchStartX;
-      const dy = t.clientY - touchStartY;
-      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-        if (dx < 0) nextImage(); else prevImage();
-      }
-      touchStartX = touchStartY = null;
-    });
-
-    // Init
     window.addEventListener('DOMContentLoaded', () => addGallery(images));
   </script>
 
