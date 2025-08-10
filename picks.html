@@ -210,4 +210,262 @@
   <a href="mailto:youremail@example.com" class="contact-tag">Contact Me</a>
 
   <!-- Animated title + subtitle -->
-  <
+  <div class="moving-text" id="movingText">chloe doodles</div>
+  <div class="subtitle" id="subtitle">graphic design</div>
+
+  <!-- Main content area -->
+  <main class="content">
+    <div class="gallery-title">gallery</div>
+    <div id="gallery" class="gallery"></div>
+  </main>
+
+  <!-- ===== Frame Lab controls ===== -->
+  <aside class="controls" id="controls">
+    <div class="controls__header">
+      <span>🖼️ Frame Lab</span>
+      <button id="togglePanel" title="Collapse">−</button>
+    </div>
+    <div class="controls__body" id="controlsBody">
+      <div class="row">
+        <label for="targetSelect">Target</label>
+        <select id="targetSelect">
+          <!-- populated by JS: All items, Image 1, Image 2, ... -->
+        </select>
+        <label class="muted"><input type="checkbox" id="applyAll"> Apply to all</label>
+      </div>
+
+      <div class="row">
+        <label for="presetSelect">Frame preset</label>
+        <select id="presetSelect">
+          <option value="gold4" data-src="ornate-gold-frame-eroded4.png" data-slice="270" data-width="60" data-mask="0">Gold Ornate (eroded 4)</option>
+          <option value="gold3" data-src="ornate-gold-frame-eroded3.png" data-slice="260" data-width="58" data-mask="0">Gold Ornate (eroded 3)</option>
+          <option value="custom">Custom upload…</option>
+        </select>
+        <input id="customFile" class="hidden" type="file" accept="image/png,image/webp,image/avif" />
+        <span class="muted">Use PNG with a transparent center for best results.</span>
+      </div>
+
+      <div class="row">
+        <label>Frame width</label>
+        <div class="range-wrap">
+          <input id="frameWidth" type="range" min="30" max="90" step="1" value="60" />
+          <span class="val" id="frameWidthVal">60px</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Frame slice</label>
+        <div class="range-wrap">
+          <input id="frameSlice" type="range" min="150" max="320" step="1" value="270" />
+          <span class="val" id="frameSliceVal">270</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Mat padding</label>
+        <div class="range-wrap">
+          <input id="matPadding" type="range" min="6" max="40" step="1" value="20" />
+          <span class="val" id="matPaddingVal">20px</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Anti-halo mask</label>
+        <div class="range-wrap">
+          <input id="mask" type="range" min="0" max="3" step="1" value="0" />
+          <span class="val" id="maskVal">0px</span>
+        </div>
+      </div>
+
+      <div class="row inline">
+        <button id="resetBtn" title="Reset target to defaults">Reset</button>
+        <span class="muted" id="status"></span>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    // Header effects
+    setTimeout(() => document.getElementById('movingText').classList.add('glow'), 3000);
+    setTimeout(() => document.getElementById('subtitle').classList.add('show'), 5000);
+
+    // ===== Build gallery =====
+    const images = [
+      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' },
+      { src: 'IMG_0003.jpg', alt: 'misadventures jeans', caption: 'misadventures jeans' },
+      { src: 'IMG_0006.jpg', alt: 'misadventures bandana', caption: 'misadventures bandana' },
+      { src: 'IMG_0522.jpg', alt: '3 cheers for sweet revenge tote', caption: '3 cheers for sweet revenge tote' },
+      { src: 'IMG_0002.jpg', alt: 'collide with the sky pencil pouch', caption: 'collide with the sky pencil pouch' }
+    ];
+
+    const frameEls = [];
+    const matEls = [];
+    function addGallery(items) {
+      const container = document.getElementById('gallery');
+      container.innerHTML = '';
+
+      items.forEach((img, idx) => {
+        const data = typeof img === 'string' ? { src: img } : img;
+
+        const fig = document.createElement('figure');
+        fig.className = 'gallery-item';
+
+        const frame = document.createElement('div');
+        frame.className = 'frame';
+        frame.style.setProperty('--frame-mask', getComputedStyle(document.documentElement).getPropertyValue('--frame-mask'));
+
+        const mat = document.createElement('div');
+        mat.className = 'mat';
+
+        const art = document.createElement('div');
+        art.className = 'art';
+
+        const image = document.createElement('img');
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.src = data.src;
+        image.alt = data.alt || `gallery image ${idx + 1}`;
+
+        art.appendChild(image);
+        mat.appendChild(art);
+        frame.appendChild(mat);
+        fig.appendChild(frame);
+
+        if (data.caption) {
+          const cap = document.createElement('figcaption');
+          cap.className = 'caption';
+          cap.textContent = data.caption;
+          fig.appendChild(cap);
+        }
+
+        container.appendChild(fig);
+        frameEls[idx] = frame;
+        matEls[idx] = mat;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      addGallery(images);
+      initControls(images.length);
+    });
+
+    // ===== Controls =====
+    function initControls(count) {
+      const targetSelect = document.getElementById('targetSelect');
+      const applyAll = document.getElementById('applyAll');
+      const presetSelect = document.getElementById('presetSelect');
+      const customFile = document.getElementById('customFile');
+
+      const frameWidth = document.getElementById('frameWidth');
+      const frameSlice = document.getElementById('frameSlice');
+      const matPadding = document.getElementById('matPadding');
+      const mask = document.getElementById('mask');
+
+      const frameWidthVal = document.getElementById('frameWidthVal');
+      const frameSliceVal = document.getElementById('frameSliceVal');
+      const matPaddingVal = document.getElementById('matPaddingVal');
+      const maskVal = document.getElementById('maskVal');
+
+      const resetBtn = document.getElementById('resetBtn');
+      const status = document.getElementById('status');
+      const togglePanel = document.getElementById('togglePanel');
+      const controlsBody = document.getElementById('controlsBody');
+
+      // Populate target options
+      targetSelect.innerHTML = '';
+      const optAll = document.createElement('option');
+      optAll.value = 'all'; optAll.textContent = 'All items';
+      targetSelect.appendChild(optAll);
+      for (let i = 0; i < count; i++) {
+        const o = document.createElement('option');
+        o.value = String(i);
+        o.textContent = `Image ${i + 1}`;
+        targetSelect.appendChild(o);
+      }
+
+      // Helpers
+      const getTargets = () => {
+        if (applyAll.checked || targetSelect.value === 'all') {
+          return frameEls.map((_, i) => i);
+        }
+        return [parseInt(targetSelect.value, 10)];
+      };
+
+      const applyStyles = ({ src, slice, width, padding, maskPx }) => {
+        const targets = getTargets();
+        targets.forEach(i => {
+          const f = frameEls[i];
+          const m = matEls[i];
+          if (src) f.style.borderImageSource = `url('${src}')`;
+          if (typeof slice === 'number') f.style.borderImageSlice = String(slice);
+          if (typeof width === 'number') f.style.borderWidth = `${width}px`;
+          if (typeof maskPx === 'number') f.style.setProperty('--frame-mask', `${maskPx}px`);
+          if (typeof padding === 'number') m.style.setProperty('--mat-padding', `${padding}px`);
+        });
+        status.textContent = targets.length > 1 ? `Applied to ${targets.length} items` : `Applied to ${targets[0] + 1}`;
+        setTimeout(() => status.textContent = '', 900);
+      };
+
+      const syncVals = () => {
+        frameWidthVal.textContent = `${frameWidth.value}px`;
+        frameSliceVal.textContent = `${frameSlice.value}`;
+        matPaddingVal.textContent = `${matPadding.value}px`;
+        maskVal.textContent = `${mask.value}px`;
+      };
+      syncVals();
+
+      // Preset change
+      presetSelect.addEventListener('change', () => {
+        const v = presetSelect.value;
+        if (v === 'custom') {
+          customFile.classList.remove('hidden');
+          customFile.value = '';
+        } else {
+          customFile.classList.add('hidden');
+          const opt = presetSelect.selectedOptions[0];
+          const src = opt.dataset.src;
+          const slice = parseInt(opt.dataset.slice, 10);
+          const width = parseInt(opt.dataset.width, 10);
+          const maskPx = parseInt(opt.dataset.mask, 10);
+
+          frameWidth.value = width; frameSlice.value = slice; mask.value = maskPx;
+          syncVals();
+          applyStyles({ src, slice, width, maskPx });
+        }
+      });
+
+      // Custom upload
+      customFile.addEventListener('change', () => {
+        const file = customFile.files?.[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        applyStyles({ src: url });
+      });
+
+      // Sliders
+      frameWidth.addEventListener('input', () => { syncVals(); applyStyles({ width: parseInt(frameWidth.value, 10) }); });
+      frameSlice.addEventListener('input', () => { syncVals(); applyStyles({ slice: parseInt(frameSlice.value, 10) }); });
+      matPadding.addEventListener('input', () => { syncVals(); applyStyles({ padding: parseInt(matPadding.value, 10) }); });
+      mask.addEventListener('input', () => { syncVals(); applyStyles({ maskPx: parseInt(mask.value, 10) }); });
+
+      // Reset
+      resetBtn.addEventListener('click', () => {
+        frameWidth.value = 60; frameSlice.value = 270; matPadding.value = 20; mask.value = 0;
+        presetSelect.value = 'gold4'; customFile.classList.add('hidden');
+        syncVals();
+        const src = presetSelect.selectedOptions[0].dataset.src;
+        applyStyles({ src, slice: 270, width: 60, padding: 20, maskPx: 0 });
+      });
+
+      // Collapse panel
+      let collapsed = false;
+      togglePanel.addEventListener('click', () => {
+        collapsed = !collapsed;
+        controlsBody.style.display = collapsed ? 'none' : 'grid';
+        togglePanel.textContent = collapsed ? '+' : '−';
+      });
+    }
+  </script>
+
+</body>
+</html>
