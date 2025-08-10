@@ -20,8 +20,10 @@
       /* mat spacing */
       --mat-padding:20px;
 
-      /* oval clip (only the photo is clipped now) */
-      --oval-x:49%; --oval-y:45%; /* bigger % = shows more photo inside oval */
+      /* oval clip — bigger % = show more photo */
+      --oval-x:50%; --oval-y:46%;
+      /* oval overlay scale — bigger = larger-looking frame & guaranteed cover */
+      --oval-scale:1.08;
     }
 
     body{margin:0;background:var(--bg-color);min-height:100vh;overflow:auto;padding:var(--page-padding);box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -51,17 +53,23 @@
     /* Frame (rectangular) */
     .frame{
       position:relative;
-      overflow:hidden;                 /* hides any overlay bleed */
+      overflow:hidden;                 /* hides overlay edges */
       border-style:solid; border-width:var(--frame-width);
       border-image-source:var(--frame-src); border-image-slice:var(--frame-slice);
       border-image-repeat:round; border-image-width:1;
-      background:var(--bg-color);      /* fills outside-oval area so no checkerboard */
+      background:var(--bg-color);      /* fills any transparency */
       display:grid; place-items:center;
     }
     .frame::after{content:"";position:absolute;inset:var(--frame-width);border:var(--frame-mask) solid var(--bg-color);pointer-events:none}
 
     /* Overlay for oval frames */
-    .overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;display:none}
+    .overlay{
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:cover;               /* ensure it covers the whole card */
+      transform:scale(var(--oval-scale)); /* make the frame itself larger */
+      transform-origin:center center;
+      pointer-events:none; display:none;
+    }
 
     /* Mat + art */
     .mat{width:100%;height:100%;background:var(--mat-color);padding:var(--mat-padding);box-sizing:border-box;display:grid;place-items:center;box-shadow:inset 0 0 0 2px var(--inner-stroke), inset 0 0 0 4px rgba(255,255,255,.18)}
@@ -69,7 +77,7 @@
     .art img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;background:transparent;transition:transform .2s ease,filter .2s ease;cursor:zoom-in}
     .gallery-item:hover .art img{transform:scale(1.02);filter:brightness(.96)}
 
-    /* Oval mode — only the PHOTO is clipped now; mat stays rectangular (visible mat ring) */
+    /* Oval mode — only the PHOTO is clipped; mat stays rectangular for a visible band */
     .frame.is-oval{border-width:0}        /* disable border-image */
     .frame.is-oval::after{border-width:0}
     .frame.is-oval .overlay{display:block}
@@ -77,7 +85,6 @@
     .frame.is-oval .art img{
       clip-path:ellipse(var(--oval-x) var(--oval-y) at 50% 50%);
     }
-    /* .mat is intentionally NOT clipped */
 
     /* Caption */
     .caption{position:absolute;left:0;right:0;bottom:0;padding:6px 8px;font-size:.85rem;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.55));opacity:0;transition:opacity .2s ease;pointer-events:none}
@@ -99,7 +106,7 @@
     setTimeout(()=>document.getElementById('movingText').classList.add('glow'),3000);
     setTimeout(()=>document.getElementById('subtitle').classList.add('show'),5000);
 
-    /* If you ever want per-image oval size, add ovalX/ovalY (percent strings) to an item. */
+    /* You can per-image override: ovalScale:'1.12', ovalX:'51%', ovalY:'47%' */
     const images = [
       // 1) Ornate gold (rect)
       { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
@@ -108,36 +115,36 @@
         frameSrc:'ornate-gold-frame-eroded4.png', frameSlice:270, frameWidth:60, frameMask:0
       },
 
-      // 2) Gold oval
+      // 2) Gold oval (overlay) — eroded3
       { src:'IMG_0003.jpg', alt:'misadventures jeans',
         caption:'misadventures jeans',
         shape:'oval',
         frameSrc:'frame-oval-gold-transparent-trimmed-eroded3.png',
-        matPadding:20
-        // ,ovalX:'49%', ovalY:'45%'  // optional per-image tweak
+        matPadding:20,
+        ovalScale:'1.10'  // slightly larger
       },
 
-      // 3) Black ornate (rect)
+      // 3) Black ornate (rect) — eroded3
       { src:'IMG_0006.jpg', alt:'misadventures bandana',
         caption:'misadventures bandana',
         shape:'rect',
         frameSrc:'frame-black-ornate-transparent-trimmed-eroded3.png', frameSlice:118, frameWidth:58, frameMask:0
       },
 
-      // 4) Silver ornate (rect) — corrected slice/width
+      // 4) Silver ornate (rect) — eroded3, safe slice/width
       { src:'IMG_0522.jpg', alt:'3 cheers for sweet revenge tote',
         caption:'3 cheers for sweet revenge tote',
         shape:'rect',
         frameSrc:'frame-silver-transparent-trimmed-eroded3.png', frameSlice:301, frameWidth:60, frameMask:0
       },
 
-      // 5) Black oval
+      // 5) Black oval (overlay) — eroded3
       { src:'IMG_0002.jpg', alt:'collide with the sky pencil pouch',
         caption:'collide with the sky pencil pouch',
         shape:'oval',
         frameSrc:'frame-oval-black-transparent-trimmed-eroded3.png',
-        matPadding:20
-        // ,ovalX:'50%', ovalY:'46%'
+        matPadding:20,
+        ovalScale:'1.10'
       }
     ];
 
@@ -164,7 +171,7 @@
         if(data.shape === 'oval'){
           frame.classList.add('is-oval');
           overlay.src = data.frameSrc;
-          // Optional per-image oval radius overrides
+          frame.style.setProperty('--oval-scale', data.ovalScale || getComputedStyle(document.documentElement).getPropertyValue('--oval-scale'));
           if (data.ovalX) frame.style.setProperty('--oval-x', data.ovalX);
           if (data.ovalY) frame.style.setProperty('--oval-y', data.ovalY);
         } else {
